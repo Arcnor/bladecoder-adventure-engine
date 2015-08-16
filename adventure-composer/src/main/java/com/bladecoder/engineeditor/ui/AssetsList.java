@@ -16,10 +16,7 @@
 package com.bladecoder.engineeditor.ui;
 
 import java.awt.Desktop;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -113,12 +110,9 @@ public class AssetsList extends Table {
 
 
 		Ctx.project.addPropertyChangeListener(Project.NOTIFY_PROJECT_LOADED,
-				new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent arg0) {
-						toolbar.disableCreate(Ctx.project.getProjectDir() == null);
-						addAssets();
-					}
+				arg0 -> {
+					toolbar.disableCreate(Ctx.project.getProjectDir() == null);
+					addAssets();
 				});
 
 		assetTypes.addListener(new ChangeListener() {
@@ -140,16 +134,10 @@ public class AssetsList extends Table {
 			if (type.equals("images") || type.equals("atlases"))
 				dir += "/1";
 
-			String[] files = new File(dir).list(new FilenameFilter() {
-				@Override
-				public boolean accept(File arg0, String arg1) {
-					String type = assetTypes.getSelected();
+			String[] files = new File(dir).list((arg0, arg1) -> {
+				String type1 = assetTypes.getSelected();
 
-					if (type.equals("atlases") && !arg1.endsWith(".atlas"))
-						return false;
-
-					return true;
-				}
+				return !(type1.equals("atlases") && !arg1.endsWith(".atlas"));
 			});
 
 			if (files != null)
@@ -216,56 +204,53 @@ public class AssetsList extends Table {
 					break;
 			}
 
-			Platform.runLater(new Runnable() {
-				@Override
-				public void run() {
-					final FileChooser chooser = new FileChooser();
-					chooser.setInitialDirectory(lastDir);
-					chooser.setTitle("Select the '" + type + "' asset files");
-					if (filter != null) {
-						chooser.getExtensionFilters().addAll(filter);
-					}
-					final List<File> files = chooser.showOpenMultipleDialog(null);
-					if (files == null) {
-						return;
-					}
-					try {
-						String dir = getAssetDir(type);
-						lastDir = files.get(0);
+			Platform.runLater(() -> {
+				final FileChooser chooser = new FileChooser();
+				chooser.setInitialDirectory(lastDir);
+				chooser.setTitle("Select the '" + type + "' asset files");
+				if (filter != null) {
+					chooser.getExtensionFilters().addAll(filter);
+				}
+				final List<File> files = chooser.showOpenMultipleDialog(null);
+				if (files == null) {
+					return;
+				}
+				try {
+					String dir = getAssetDir(type);
+					lastDir = files.get(0);
 
-						for (File f : files) {
-							if (type.equals("images")) {
-								List<String> res = Ctx.project.getResolutions();
+					for (File f : files) {
+						if (type.equals("images")) {
+							List<String> res = Ctx.project.getResolutions();
 
-								for (String r : res) {
-									File destFile = new File(dir + "/" + r
-											+ "/" + f.getName());
-									float scale = Float.parseFloat(r);
+							for (String r : res) {
+								File destFile = new File(dir + "/" + r
+										+ "/" + f.getName());
+								float scale = Float.parseFloat(r);
 
-									if (scale != 1.0f) {
+								if (scale != 1.0f) {
 
-										ImageUtils.scaleImageFile(f, destFile,
-												scale);
-									} else {
-										Files.copy(f.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-									}
+									ImageUtils.scaleImageFile(f, destFile,
+											scale);
+								} else {
+									Files.copy(f.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 								}
-							} else {
-								File destFile = new File(dir + "/" + f.getName());
-								Files.copy(f.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 							}
-
+						} else {
+							File destFile = new File(dir + "/" + f.getName());
+							Files.copy(f.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 						}
 
-						addAssets();
-					} catch (Exception ex) {
-						String msg = "Something went wrong while getting the assets.\n\n"
-								+ ex.getClass().getSimpleName()
-								+ " - "
-								+ ex.getMessage();
-						Ctx.msg.show(getStage(), msg, 4);
-						ex.printStackTrace();
 					}
+
+					addAssets();
+				} catch (Exception ex) {
+					String msg = "Something went wrong while getting the assets.\n\n"
+							+ ex.getClass().getSimpleName()
+							+ " - "
+							+ ex.getMessage();
+					Ctx.msg.show(getStage(), msg, 4);
+					ex.printStackTrace();
 				}
 			});
 		}

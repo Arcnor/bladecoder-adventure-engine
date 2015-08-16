@@ -28,11 +28,7 @@ import com.bladecoder.engineeditor.model.BaseDocument;
 public class I18NUtils {
 	
 	public static boolean mustTraslateAttr(String attrName) {
-		if (attrName.equals("desc") || attrName.toLowerCase().endsWith("text")) {
-			return true;
-		}
-		
-		return false;
+		return attrName.equals("desc") || attrName.toLowerCase().endsWith("text");
 	}
 	
 	/**
@@ -92,7 +88,7 @@ public class I18NUtils {
 			
 			String dialogId = dialog.getAttribute("id");
 			String actorId = ((Element) dialog.getParentNode()).getAttribute("id");
-			String sceneId = ((Element)((Element) dialog.getParentNode()).getParentNode()).getAttribute("id");
+			String sceneId = ((Element) dialog.getParentNode().getParentNode()).getAttribute("id");
 			
 			key = sceneId + "." + actorId + "." + dialogId + "." + optionId + "." + attr;
 		} else 	if (e.getTagName().equals("action")) {

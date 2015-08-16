@@ -15,9 +15,6 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.ui;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import org.w3c.dom.Element;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -50,24 +47,21 @@ public class ScenePanel extends HeaderPanel {
 		tabPanel.addTab("Layers", layerList);
 		tabPanel.addTab("Scene Props", sceneProps);
 		
-		Ctx.project.addPropertyChangeListener(Project.NOTIFY_SCENE_SELECTED, new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				ChapterDocument doc = Ctx.project.getSelectedChapter();
-				Element scn = Ctx.project.getSelectedScene();
-				
-				if(scn != null) {								
-					setTile("SCENE " + doc.getId(scn));
-				} else {
-					setTile("SCENE");
-				}
-				
-				actorList.addElements(doc, scn, "actor");
-//				verbList.addElements(doc, scn, "verb");	
-				layerList.addElements(doc, scn, "layer");		
-				sceneProps.setSceneDocument(doc, scn);
-				
+		Ctx.project.addPropertyChangeListener(Project.NOTIFY_SCENE_SELECTED, evt -> {
+			ChapterDocument doc = Ctx.project.getSelectedChapter();
+			Element scn = Ctx.project.getSelectedScene();
+
+			if(scn != null) {
+				setTile("SCENE " + doc.getId(scn));
+			} else {
+				setTile("SCENE");
 			}
-		});	
+
+			actorList.addElements(doc, scn, "actor");
+//				verbList.addElements(doc, scn, "verb");
+			layerList.addElements(doc, scn, "layer");
+			sceneProps.setSceneDocument(doc, scn);
+
+		});
 	}
 }

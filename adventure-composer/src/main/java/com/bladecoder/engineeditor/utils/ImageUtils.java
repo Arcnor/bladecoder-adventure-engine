@@ -16,11 +16,9 @@
 package com.bladecoder.engineeditor.utils;
 
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -49,7 +47,7 @@ public class ImageUtils {
 			float h = (float) tmp.getHeight() * (float) w / (float) tmp.getWidth();
 
 			img = scaleImage(w, (int) h, tmp, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-			icon = new ImageIcon((Image) img);
+			icon = new ImageIcon(img);
 		}
 
 		return icon;
@@ -59,7 +57,7 @@ public class ImageUtils {
 		BufferedImage bi;
 
 		bi = new BufferedImage(w, h, img.getType());
-		Graphics2D g2d = (Graphics2D) bi.createGraphics();
+		Graphics2D g2d = bi.createGraphics();
 		// g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 		// RenderingHints.VALUE_ANTIALIAS_ON);
 		// g2d.addRenderingHints(new
@@ -101,16 +99,7 @@ public class ImageUtils {
 	 * @throws IOException
 	 */
 	public static void scaleDirFiles(File orgDir, File destDir, float scale) throws IOException {
-		File[] files = orgDir.listFiles(new FilenameFilter() {
-
-			@Override
-			public boolean accept(File dir, String name) {
-				if (name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".jpg"))
-					return true;
-
-				return false;
-			}
-		});
+		File[] files = orgDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".jpg"));
 
 		for (File f : files) {
 			if(f.getName().endsWith(".9.png")) { // 9 patches doesn't scale
@@ -136,16 +125,7 @@ public class ImageUtils {
 	}
 
 	public static void scaleDirAtlases(File orgDir, File destDir, float scale) throws IOException {
-		File[] files = orgDir.listFiles(new FilenameFilter() {
-
-			@Override
-			public boolean accept(File dir, String name) {
-				if (name.toLowerCase().endsWith(".atlas"))
-					return true;
-
-				return false;
-			}
-		});
+		File[] files = orgDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".atlas"));
 
 		for (File f : files) {
 			ImageUtils.scaleAtlas(f, destDir, scale);

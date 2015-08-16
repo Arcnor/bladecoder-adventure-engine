@@ -29,10 +29,8 @@ public class HttpUtils {
 	public static DownloadTask downloadAsync(URL input, OutputStream output, Callback callback) {
 		final DownloadTask task = new DownloadTask(input, output, callback);
 
-		new Thread(new Runnable() {
-			@Override public void run() {
-				task.download();
-			}
+		new Thread(() -> {
+			task.download();
 		}).start();
 
 		return task;

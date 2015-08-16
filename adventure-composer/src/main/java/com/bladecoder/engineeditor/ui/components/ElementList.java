@@ -15,8 +15,6 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.ui.components;
 
-import java.util.Comparator;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -86,12 +84,7 @@ public abstract class ElementList extends EditList<Element> {
 		toolbar.disableEdit(list.getSelectedIndex() < 0);
 		
 		if(sorted) {
-			list.getItems().sort(new Comparator<Element>() {
-				@Override
-				public int compare(Element o1, Element o2) {
-					return o1.getAttribute("id").compareTo(o2.getAttribute("id"));
-				}
-			});
+			list.getItems().sort((o1, o2) -> o1.getAttribute("id").compareTo(o2.getAttribute("id")));
 		}
 
 		toolbar.disableCreate(parent == null);

@@ -15,8 +15,6 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.ui;
 
-import java.util.Comparator;
-
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -54,7 +52,7 @@ public class ChapterList extends EditList<String> {
 	}
 
 	private void setDefault() {
-		WorldDocument w = (WorldDocument) doc;
+		WorldDocument w = doc;
 
 		String e = list.getSelected();
 
@@ -86,7 +84,7 @@ public class ChapterList extends EditList<String> {
 		}
 
 		try {
-			((WorldDocument) doc).removeChapter(e);
+			doc.removeChapter(e);
 			Ctx.project.saveProject();
 		} catch (Exception ex) {
 			String msg = "Something went wrong while deleting the chapter.\n\n"
@@ -163,12 +161,7 @@ public class ChapterList extends EditList<String> {
 
 		toolbar.disableEdit(list.getSelectedIndex() < 0);
 
-		list.getItems().sort(new Comparator<String>() {
-			@Override
-			public int compare(String o1, String o2) {
-				return o1.compareTo(o2);
-			}
-		});
+		list.getItems().sort((o1, o2) -> o1.compareTo(o2));
 
 		invalidateHierarchy();
 	}
@@ -182,7 +175,7 @@ public class ChapterList extends EditList<String> {
 		protected String getCellTitle(String e) {
 			String id = e;
 
-			String init = ((WorldDocument) doc).getInitChapter();
+			String init = doc.getInitChapter();
 
 			if (init.equals(id))
 				id += " <init>";

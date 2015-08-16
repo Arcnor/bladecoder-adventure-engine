@@ -15,9 +15,6 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.ui;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.bladecoder.engineeditor.Ctx;
 import com.bladecoder.engineeditor.model.ChapterDocument;
@@ -52,17 +49,14 @@ public class ProjectPanel extends HeaderPanel  {
 		tabPanel.addTab("Resolutions", new ResolutionList(skin));
 
 
-		Ctx.project.addPropertyChangeListener(Project.NOTIFY_PROJECT_LOADED, new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent e) {
-				WorldDocument w = Ctx.project.getWorld();
-				ChapterDocument selectedChapter = Ctx.project.getSelectedChapter();
-				
-				sceneList.addElements(selectedChapter, selectedChapter.getElement(), "scene");
+		Ctx.project.addPropertyChangeListener(Project.NOTIFY_PROJECT_LOADED, e -> {
+			WorldDocument w = Ctx.project.getWorld();
+			ChapterDocument selectedChapter = Ctx.project.getSelectedChapter();
+
+			sceneList.addElements(selectedChapter, selectedChapter.getElement(), "scene");
 //				verbList.addElements(w, w.getElement(), "verb");
-				chapterList.addElements(w);
-				setTile("ADVENTURE - " + (Ctx.project.getTitle() != null? Ctx.project.getTitle():""));
-			}
-		});		
+			chapterList.addElements(w);
+			setTile("ADVENTURE - " + (Ctx.project.getTitle() != null? Ctx.project.getTitle():""));
+		});
 	}
 }

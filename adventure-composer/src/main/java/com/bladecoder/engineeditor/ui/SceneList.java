@@ -15,8 +15,6 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.ui;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -115,35 +113,29 @@ public class SceneList extends ElementList {
 		});
 
 		Ctx.project.addPropertyChangeListener(Project.NOTIFY_PROJECT_LOADED,
-				new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent arg0) {
-						toolbar.disableCreate(Ctx.project.getProjectDir() == null);
+				arg0 -> {
+					toolbar.disableCreate(Ctx.project.getProjectDir() == null);
 
-						disposeBgCache = true;
-						addChapters();
-					}
+					disposeBgCache = true;
+					addChapters();
 				});
 
 		chapters.addListener(chapterListener);
 
 		Ctx.project.getWorld().addPropertyChangeListener(
-				new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent evt) {
-						EditorLogger.debug(evt.getPropertyName() + " NEW:"
-								+ evt.getNewValue() + " OLD:"
-								+ evt.getOldValue());
+				evt -> {
+					EditorLogger.debug(evt.getPropertyName() + " NEW:"
+							+ evt.getNewValue() + " OLD:"
+							+ evt.getOldValue());
 
-						if (evt.getPropertyName().equals(XMLConstants.CHAPTER_TAG)) {
+					if (evt.getPropertyName().equals(XMLConstants.CHAPTER_TAG)) {
+						addChapters();
+					} else if (evt.getPropertyName().equals(
+							"ELEMENT_DELETED")) {
+						Element e = (Element) evt.getNewValue();
+
+						if (e.getTagName().equals(XMLConstants.CHAPTER_TAG)) {
 							addChapters();
-						} else if (evt.getPropertyName().equals(
-								"ELEMENT_DELETED")) {
-							Element e = (Element) evt.getNewValue();
-
-							if (e.getTagName().equals(XMLConstants.CHAPTER_TAG)) {								
-								addChapters();
-							}
 						}
 					}
 				});
@@ -153,7 +145,7 @@ public class SceneList extends ElementList {
 	ChangeListener chapterListener = new ChangeListener() {
 		@Override
 		public void changed(ChangeEvent event, Actor actor) {
-			String selChapter = (String) chapters.getSelected();
+			String selChapter = chapters.getSelected();
 
 			if (selChapter != null && !selChapter.equals(Ctx.project.getSelectedChapter().getId())) {
 

@@ -15,8 +15,6 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.ui;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,12 +47,9 @@ public class ResolutionList extends EditList<String> {
 		});
 
 		Ctx.project.addPropertyChangeListener(Project.NOTIFY_PROJECT_LOADED,
-				new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent arg0) {
-						toolbar.disableCreate(Ctx.project.getProjectDir() == null);
-						addResolutions();
-					}
+				arg0 -> {
+					toolbar.disableCreate(Ctx.project.getProjectDir() == null);
+					addResolutions();
 				});
 	}
 
@@ -63,16 +58,11 @@ public class ResolutionList extends EditList<String> {
 
 			list.getItems().clear();
 
-			ArrayList<String> tmp = new ArrayList<String>();
-
-			for (String scn : Ctx.project.getResolutions()) {
-				tmp.add(scn);
-			}
+			ArrayList<String> tmp = new ArrayList<>(Ctx.project.getResolutions());
 
 			Collections.sort(tmp);
 
-			for (String s : tmp)
-				list.getItems().add(s);
+			list.getItems().addAll(tmp.toArray(new String[tmp.size()]));
 
 			if (list.getItems().size > 0) {
 				list.setSelectedIndex(0);

@@ -16,7 +16,6 @@
 package com.bladecoder.engineeditor.ui;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Arrays;
 
 import org.w3c.dom.Element;
@@ -100,7 +99,7 @@ public class EditSceneDialog extends EditElementDialog {
 
 		
 		
-		((SelectBox<String>) inputs[1].getField()).addListener(new ChangeListener() {
+		inputs[1].getField().addListener(new ChangeListener() {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -113,7 +112,7 @@ public class EditSceneDialog extends EditElementDialog {
 		});
 		
 
-		((SelectBox<String>) inputs[2].getField())
+		inputs[2].getField()
 			.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -121,7 +120,7 @@ public class EditSceneDialog extends EditElementDialog {
 			}
 		});
 		
-		((SelectBox<String>) inputs[3].getField()).addListener(new ChangeListener() {
+		inputs[3].getField().addListener(new ChangeListener() {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -246,16 +245,7 @@ public class EditSceneDialog extends EditElementDialog {
 
 		File f = new File(bgPath);
 
-		String bgs[] = f.list(new FilenameFilter() {
-
-			@Override
-			public boolean accept(File arg0, String arg1) {
-				if (arg1.endsWith(".atlas"))
-					return true;
-
-				return false;
-			}
-		});
+		String bgs[] = f.list((arg0, arg1) -> arg1.endsWith(".atlas"));
 
 		Arrays.sort(bgs);
 
@@ -273,24 +263,14 @@ public class EditSceneDialog extends EditElementDialog {
 
 		File f = new File(path);
 
-		String musicFiles[] = f.list(new FilenameFilter() {
-
-			@Override
-			public boolean accept(File arg0, String arg1) {
-				if (arg1.endsWith(".ogg") || arg1.endsWith(".mp3"))
-					return true;
-
-				return false;
-			}
-		});
+		String musicFiles[] = f.list((arg0, arg1) -> arg1.endsWith(".ogg") || arg1.endsWith(".mp3"));
 
 		Arrays.sort(musicFiles);
 		
 		String musicFiles2[] = new String[musicFiles.length + 1];
 		musicFiles2[0] = "";
-		
-		for(int i=0; i < musicFiles.length; i++)
-			musicFiles2[i + 1] = musicFiles[i];
+
+		System.arraycopy(musicFiles, 0, musicFiles2, 1, musicFiles.length);
 
 		return musicFiles2;
 	}

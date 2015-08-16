@@ -230,12 +230,12 @@ public class ActionList extends ElementList {
 			e2 = list.getItems().get(pos);
 
 		if (e.getAttribute("endType").equals("else")) {
-			Element elseEl = doc.createElement((Element) parent, "action");
+			Element elseEl = doc.createElement(parent, "action");
 			elseEl.setAttribute(XMLConstants.ACTION_NAME_ATTR, "Else");
 			elseEl.setAttribute("class", END_ACTION);
 			elseEl.setAttribute("endType", "else");
 
-			Element endEl = doc.createElement((Element) parent, "action");
+			Element endEl = doc.createElement(parent, "action");
 			endEl.setAttribute(XMLConstants.ACTION_NAME_ATTR,
 					"End" + e.getAttribute(XMLConstants.ACTION_NAME_ATTR));
 			endEl.setAttribute("class", END_ACTION);
@@ -247,7 +247,7 @@ public class ActionList extends ElementList {
 			parent.insertBefore(elseEl, e2);
 			parent.insertBefore(endEl, e2);
 		} else {
-			Element endEl = doc.createElement((Element) parent, "action");
+			Element endEl = doc.createElement(parent, "action");
 			endEl.setAttribute(XMLConstants.ACTION_NAME_ATTR,
 					"End" + e.getAttribute(XMLConstants.ACTION_NAME_ATTR));
 			endEl.setAttribute("class", END_ACTION);

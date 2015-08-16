@@ -15,11 +15,9 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.model;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -39,14 +37,11 @@ public class WorldDocument extends  BaseDocument {
 	
 	private int width = -1, height = -1;
 	
-    private PropertyChangeListener documentModifiedListener = new PropertyChangeListener() {	
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
+    private PropertyChangeListener documentModifiedListener = evt -> {
 //			if(!evt.getPropertyName().equals(NOTIFY_DOCUMENT_MODIFIED))
-			firePropertyChange(evt);
-			EditorLogger.debug("WorldDocument Listener: " +  evt.getPropertyName());
-		}
-	};
+	    firePropertyChange(evt);
+	    EditorLogger.debug("WorldDocument Listener: " +  evt.getPropertyName());
+    };
 	
 	public WorldDocument() {
 		setFilename(XMLConstants.WORLD_FILENAME);
@@ -74,15 +69,7 @@ public class WorldDocument extends  BaseDocument {
 	public String[] getChapters() {
 		String dir = Ctx.project.getProjectPath() + Project.MODEL_PATH;
 		
-		String[] chapters = new File(dir).list(new FilenameFilter() {
-			@Override
-			public boolean accept(File arg0, String arg1) {
-				if (!arg1.endsWith(XMLConstants.CHAPTER_EXT))
-					return false;
-
-				return true;
-			}
-		});
+		String[] chapters = new File(dir).list((arg0, arg1) -> arg1.endsWith(XMLConstants.CHAPTER_EXT));
 		
 		for(int i = 0; i < chapters.length; i++)
 			chapters[i] = chapters[i].substring(0, chapters[i].lastIndexOf('.'));

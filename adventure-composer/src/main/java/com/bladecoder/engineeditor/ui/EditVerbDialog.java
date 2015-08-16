@@ -19,8 +19,6 @@ import org.w3c.dom.Element;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.bladecoder.engine.actions.Param.Type;
 import com.bladecoder.engineeditor.model.BaseDocument;
@@ -87,12 +85,7 @@ public class EditVerbDialog extends EditElementDialog {
 
 				});
 		
-		((EditableSelectBox)inputs[0].getField()).getInput().setTextFieldListener(new TextFieldListener() {
-			@Override
-			public void keyTyped(TextField actor, char c) {
-				updateDesc();
-			}
-		});		
+		((EditableSelectBox)inputs[0].getField()).getInput().setTextFieldListener((actor, c) -> updateDesc());
 
 		init(inputs, attrs, doc, parentElement, "verb", e);
 
@@ -109,7 +102,7 @@ public class EditVerbDialog extends EditElementDialog {
 	}
 	
 	private void updateDesc() {
-		String id = (String) inputs[0].getText();
+		String id = inputs[0].getText();
 		int i = ((EditableOptionsInputPanel) inputs[0])
 				.getSelectedIndex();
 

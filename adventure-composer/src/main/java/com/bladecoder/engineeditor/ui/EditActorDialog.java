@@ -20,7 +20,6 @@ import org.w3c.dom.NodeList;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.bladecoder.engine.actions.Param;
@@ -122,7 +121,7 @@ public class EditActorDialog extends EditElementDialog {
 		typePanel = inputs[0];
 		rendererPanel = inputs[1];
 
-		((SelectBox<String>) typePanel.getField())
+		typePanel.getField()
 				.addListener(new ChangeListener() {
 
 					@Override
@@ -131,7 +130,7 @@ public class EditActorDialog extends EditElementDialog {
 					}
 				});
 		
-		((SelectBox<String>) rendererPanel.getField())
+		rendererPanel.getField()
 			.addListener(new ChangeListener() {
 
 			@Override

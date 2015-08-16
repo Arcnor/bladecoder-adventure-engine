@@ -58,8 +58,7 @@ public class TemplateUtils {
 
 	    // now, write the file again with the changes
 	    PrintWriter out = new PrintWriter(dest);
-	    for (String l : lines)
-	        out.println(l);
+		lines.forEach(out::println);
 	    out.close();
 	}
 }

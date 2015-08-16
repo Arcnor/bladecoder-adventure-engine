@@ -16,7 +16,6 @@
 package com.bladecoder.engineeditor.ui;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Arrays;
 
 import org.w3c.dom.Element;
@@ -24,7 +23,6 @@ import org.w3c.dom.Element;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.bladecoder.engine.actions.Param;
@@ -111,7 +109,7 @@ public class EditAnimationDialog extends EditElementDialog {
 
 		typePanel = inputs[TYPE_INPUTPANEL];
 
-		((SelectBox<String>) typePanel.getField())
+		typePanel.getField()
 				.addListener(new ChangeListener() {
 
 					@Override
@@ -128,7 +126,7 @@ public class EditAnimationDialog extends EditElementDialog {
 					}
 				});
 
-		((SelectBox<String>) inputs[SOURCE_INPUTPANEL].getField())
+		inputs[SOURCE_INPUTPANEL].getField()
 				.addListener(new ChangeListener() {
 					@Override
 					public void changed(ChangeEvent event, Actor actor) {
@@ -140,7 +138,7 @@ public class EditAnimationDialog extends EditElementDialog {
 					}
 				});
 
-		((SelectBox<String>) inputs[ID_INPUTPANEL].getField())
+		inputs[ID_INPUTPANEL].getField()
 				.addListener(new ChangeListener() {
 					@Override
 					public void changed(ChangeEvent event, Actor actor) {
@@ -148,7 +146,7 @@ public class EditAnimationDialog extends EditElementDialog {
 					}
 				});
 		
-		((SelectBox<String>) inputs[ATLAS_INPUTPANEL].getField())
+		inputs[ATLAS_INPUTPANEL].getField()
 		.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -158,7 +156,7 @@ public class EditAnimationDialog extends EditElementDialog {
 		});
 		
 
-		((TextField) inputs[SPEED_INPUTPANEL].getField()).addListener(new ChangeListener() {
+		inputs[SPEED_INPUTPANEL].getField().addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				setAnimation();
@@ -301,16 +299,7 @@ public class EditAnimationDialog extends EditElementDialog {
 
 		File f = new File(path);
 
-		String sources[] = f.list(new FilenameFilter() {
-
-			@Override
-			public boolean accept(File arg0, String arg1) {
-				if (arg1.endsWith(ext))
-					return true;
-
-				return false;
-			}
-		});
+		String sources[] = f.list((arg0, arg1) -> arg1.endsWith(ext));
 
 		if (sources != null) {
 			Arrays.sort(sources);
@@ -331,16 +320,7 @@ public class EditAnimationDialog extends EditElementDialog {
 
 		File f = new File(path);
 
-		String atlases[] = f.list(new FilenameFilter() {
-
-			@Override
-			public boolean accept(File arg0, String arg1) {
-				if (arg1.endsWith(ATLAS_EXT))
-					return true;
-
-				return false;
-			}
-		});
+		String atlases[] = f.list((arg0, arg1) -> arg1.endsWith(ATLAS_EXT));
 
 		if (atlases != null) {
 			Arrays.sort(atlases);

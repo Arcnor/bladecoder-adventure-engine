@@ -15,9 +15,7 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.ui;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
+import com.badlogic.gdx.utils.Array;
 import org.w3c.dom.Element;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -75,69 +73,64 @@ public class ActorList extends ElementList {
 
 		list.setCellRenderer(listCellRenderer);
 
-		Ctx.project.addPropertyChangeListener(Project.NOTIFY_ACTOR_SELECTED, new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent e) {
-				int pos = list.getSelectedIndex();
+		Ctx.project.addPropertyChangeListener(Project.NOTIFY_ACTOR_SELECTED, e -> {
+			int pos = list.getSelectedIndex();
 
-				// Element newActor = (Element) e.getNewValue();
-				Element newActor = Ctx.project.getSelectedActor();
+			// Element newActor = (Element) e.getNewValue();
+			Element newActor = Ctx.project.getSelectedActor();
 
-				if (newActor == null)
+			if (newActor == null)
+				return;
+
+			if (pos != -1) {
+				Element oldActor = list.getItems().get(pos);
+
+				if (oldActor == newActor) {
 					return;
-
-				if (pos != -1) {
-					Element oldActor = list.getItems().get(pos);
-
-					if (oldActor == newActor) {
-						return;
-					}
 				}
-
-				int i = list.getItems().indexOf(newActor, true);
-				if (i >= 0)
-					list.setSelectedIndex(i);
 			}
+
+			int i = list.getItems().indexOf(newActor, true);
+			if (i >= 0)
+				list.setSelectedIndex(i);
 		});
 
-		Ctx.project.getWorld().addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent e) {
-				if (e.getPropertyName().equals(BaseDocument.NOTIFY_ELEMENT_DELETED)) {
-					if (((Element) e.getNewValue()).getTagName().equals("actor")) {
-						Element el = (Element) e.getNewValue();
-
-						for (Element e2 : list.getItems()) {
-							if (e2 == el) {
-								int pos = list.getItems().indexOf(e2, true);
-
-								list.getItems().removeIndex(pos);
-
-								clipboard = e2;
-								I18NUtils.putTranslationsInElement(doc, clipboard);
-								toolbar.disablePaste(false);
-
-								if (pos > 0)
-									list.setSelectedIndex(pos - 1);
-								else if (pos == 0 && list.getItems().size > 0)
-									list.setSelectedIndex(0);
-							}
-						}
-					}
-				} else if (e.getPropertyName().equals("actor") && e.getSource() instanceof UndoOp) {
+		Ctx.project.getWorld().addPropertyChangeListener(e -> {
+			if (e.getPropertyName().equals(BaseDocument.NOTIFY_ELEMENT_DELETED)) {
+				if (((Element) e.getNewValue()).getTagName().equals("actor")) {
 					Element el = (Element) e.getNewValue();
 
-					if (getItems().indexOf(el, true) != -1)
-						return;
+					final Array<Element> items = list.getItems();
+					for (Element e2 : items) {
+						if (e2 == el) {
+							int pos = items.indexOf(e2, true);
 
-					addItem(el);
+							items.removeIndex(pos);
 
-					int i = getItems().indexOf(el, true);
-					if (i != -1)
-						list.setSelectedIndex(i);
+							clipboard = e2;
+							I18NUtils.putTranslationsInElement(doc, clipboard);
+							toolbar.disablePaste(false);
 
-					list.invalidateHierarchy();
+							if (pos > 0)
+								list.setSelectedIndex(pos - 1);
+							else if (pos == 0 && items.size > 0)
+								list.setSelectedIndex(0);
+						}
+					}
 				}
+			} else if (e.getPropertyName().equals("actor") && e.getSource() instanceof UndoOp) {
+				Element el = (Element) e.getNewValue();
+
+				if (getItems().indexOf(el, true) != -1)
+					return;
+
+				addItem(el);
+
+				int i = getItems().indexOf(el, true);
+				if (i != -1)
+					list.setSelectedIndex(i);
+
+				list.invalidateHierarchy();
 			}
 		});
 	}

@@ -15,9 +15,6 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.ui;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.bladecoder.engine.loader.XMLConstants;
 import com.bladecoder.engine.util.Config;
@@ -31,12 +28,7 @@ public class WorldProps extends PropertyTable {
 		super(skin);
 
 		Ctx.project.addPropertyChangeListener(Project.NOTIFY_PROJECT_LOADED,
-				new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent arg0) {
-						setProject();
-					}
-				});
+				arg0 -> setProject());
 	}
 
 	@Override

@@ -21,7 +21,6 @@ import org.w3c.dom.Element;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -60,7 +59,7 @@ public class EditActionDialog extends EditElementDialog {
 
 		classPanel = InputPanelFactory.createInputPanel(skin, "Class", "Select the class for the custom action.", true);
 
-		((SelectBox<String>) actionPanel.getField()).addListener(new ChangeListener() {
+		actionPanel.getField().addListener(new ChangeListener() {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
@@ -68,7 +67,7 @@ public class EditActionDialog extends EditElementDialog {
 			}
 		});
 
-		((TextField) classPanel.getField()).addListener(new FocusListener() {
+		classPanel.getField().addListener(new FocusListener() {
 			@Override
 			public void keyboardFocusChanged(FocusEvent event, Actor actor, boolean focused) {
 				if (!event.isFocused())

@@ -48,38 +48,35 @@ public class FileInputPanel extends InputPanel {
 
 //		((TextField) getField()).setEditable(false);
 
-		((TextButton) getField()).addListener(new ClickListener() {
+		getField().addListener(new ClickListener() {
 			public void clicked (InputEvent event, float x, float y) {
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						final File result;
-						switch (dialogType) {
-							case DIRECTORY: {
-								DirectoryChooser chooser = new DirectoryChooser();
-								chooser.setInitialDirectory(cd);
-								chooser.setTitle(DIR_TEXT);
-								result = chooser.showDialog(null);
-								break;
-							}
-							case OPEN_FILE:
-							case SAVE_FILE: {
-								FileChooser chooser = new FileChooser();
-								chooser.setInitialDirectory(cd);
-								chooser.setTitle(FILE_TEXT);
-								result = dialogType == DialogType.OPEN_FILE
-										? chooser.showOpenDialog(null)
-										: chooser.showSaveDialog(null);
-								break;
-							}
-							default:
-								throw new RuntimeException("Unknown dialog type");
+				Platform.runLater(() -> {
+					final File result;
+					switch (dialogType) {
+						case DIRECTORY: {
+							DirectoryChooser chooser = new DirectoryChooser();
+							chooser.setInitialDirectory(cd);
+							chooser.setTitle(DIR_TEXT);
+							result = chooser.showDialog(null);
+							break;
 						}
+						case OPEN_FILE:
+						case SAVE_FILE: {
+							FileChooser chooser = new FileChooser();
+							chooser.setInitialDirectory(cd);
+							chooser.setTitle(FILE_TEXT);
+							result = dialogType == DialogType.OPEN_FILE
+									? chooser.showOpenDialog(null)
+									: chooser.showSaveDialog(null);
+							break;
+						}
+						default:
+							throw new RuntimeException("Unknown dialog type");
+					}
 
-						if (result != null) {
-							((TextButton) getField()).setText(result.getAbsolutePath());
-							selected = cd = result;
-						}
+					if (result != null) {
+						((TextButton) getField()).setText(result.getAbsolutePath());
+						selected = cd = result;
 					}
 				});
 			}

@@ -42,10 +42,7 @@ public class EditorLogger {
 	}
 
 	public static boolean debugMode() {
-		if (level == Levels.DEBUG)
-			return true;
-
-		return false;
+		return level == Levels.DEBUG;
 	}
 
 	public static Levels getDebugLevel() {

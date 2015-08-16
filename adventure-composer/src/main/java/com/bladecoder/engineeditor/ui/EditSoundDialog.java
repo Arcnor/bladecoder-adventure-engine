@@ -16,7 +16,6 @@
 package com.bladecoder.engineeditor.ui;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Arrays;
 
 import org.w3c.dom.Element;
@@ -59,16 +58,7 @@ public class EditSoundDialog extends EditElementDialog {
 
 		File f = new File(path);
 
-		String soundFiles[] = f.list(new FilenameFilter() {
-
-			@Override
-			public boolean accept(File arg0, String arg1) {
-				if (arg1.endsWith(".ogg") || arg1.endsWith(".wav") || arg1.endsWith(".mp3"))
-					return true;
-
-				return false;
-			}
-		});
+		String soundFiles[] = f.list((arg0, arg1) -> arg1.endsWith(".ogg") || arg1.endsWith(".wav") || arg1.endsWith(".mp3"));
 
 		Arrays.sort(soundFiles);
 

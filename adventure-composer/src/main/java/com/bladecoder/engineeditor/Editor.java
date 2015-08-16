@@ -179,7 +179,7 @@ public class Editor implements ApplicationListener {
 				|| Ctx.project.getSelectedChapter().isModified())) {
 			new Dialog("Save Project", skin) {
 				protected void result(Object object) {
-					if (((Boolean) object).booleanValue()) {
+					if ((Boolean) object) {
 						try {
 							Ctx.project.saveProject();
 						} catch (TransformerException | IOException e1) {

@@ -70,7 +70,7 @@ public class EditChapterDialog extends EditDialog {
 
 	private void create() {
 		try {
-			newId = ((WorldDocument) doc).createChapter(inputId.getText()).getRootAttr("id");
+			newId = doc.createChapter(inputId.getText()).getRootAttr("id");
 		} catch (FileNotFoundException | TransformerException
 				| ParserConfigurationException e) {
 			String msg = "Something went wrong while creating the chapter.\n\n"
@@ -91,7 +91,7 @@ public class EditChapterDialog extends EditDialog {
 					Ctx.project.getSelectedChapter().save();
 				}
 				
-				((WorldDocument) doc).renameChapter(previousId, newId);
+				doc.renameChapter(previousId, newId);
 				
 				// Reload chapter if renamed chapter is the selected chapter
 				if(previousId.equals(Ctx.project.getSelectedChapter())) {

@@ -119,7 +119,7 @@ public class AnimationWidget extends Widget {
 
 		renderer.update(Gdx.graphics.getDeltaTime());
 
-		RectangleRenderer.draw((SpriteBatch) batch, getX(), getY(), getWidth(), getHeight(), Color.MAGENTA);
+		RectangleRenderer.draw(batch, getX(), getY(), getWidth(), getHeight(), Color.MAGENTA);
 
 		float scalew = getWidth() / renderer.getWidth();
 		float scaleh = getHeight() / renderer.getHeight();

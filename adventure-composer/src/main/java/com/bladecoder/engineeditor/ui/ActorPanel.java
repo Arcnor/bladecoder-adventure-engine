@@ -15,9 +15,6 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.ui;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import org.w3c.dom.Element;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -49,54 +46,50 @@ public class ActorPanel extends HeaderPanel {
 		setContent(tabPanel);
 
 		Ctx.project.addPropertyChangeListener(Project.NOTIFY_ACTOR_SELECTED,
-				new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent e) {
-						Element a = (Element) e.getNewValue();
-						ChapterDocument doc = Ctx.project.getSelectedChapter();
+				e -> {
+					Element a = (Element) e.getNewValue();
+					ChapterDocument doc = Ctx.project.getSelectedChapter();
 
-						String selTitle = tabPanel.getSelectedIndex() == -1? null: tabPanel.getTitleAt(tabPanel.getSelectedIndex());
-						tabPanel.clear();
+					String selTitle = tabPanel.getSelectedIndex() == -1? null: tabPanel.getTitleAt(tabPanel.getSelectedIndex());
+					tabPanel.clear();
 
-						if (a != null) {
+					if (a != null) {
 
-							String type = doc.getType(a);
+						String type = doc.getType(a);
 
-							tabPanel.addTab("Verbs", verbList);
-							
-							if (type.equals(XMLConstants.SPRITE_VALUE) || type.equals(XMLConstants.CHARACTER_VALUE))
-								tabPanel.addTab("Animations", faList);
+						tabPanel.addTab("Verbs", verbList);
 
-							if (!type.equals(XMLConstants.OBSTACLE_VALUE))
-								tabPanel.addTab("Sounds", soundList);
+						if (type.equals(XMLConstants.SPRITE_VALUE) || type.equals(XMLConstants.CHARACTER_VALUE))
+							tabPanel.addTab("Animations", faList);
 
-							if (type.equals(XMLConstants.CHARACTER_VALUE)) {
-								tabPanel.addTab("Dialogs", dialogList);
-							}
-							
-							
-							tabPanel.addTab("Actor Props", props);
-							setTile("ACTOR " + doc.getId(a));
+						if (!type.equals(XMLConstants.OBSTACLE_VALUE))
+							tabPanel.addTab("Sounds", soundList);
 
-							// select previous selected tab
-							if (selTitle != null) {
-								for (int i = 0; i < tabPanel.getTabCount(); i++) {
-									if (tabPanel.getTitleAt(i).equals(selTitle)) {
-										tabPanel.setTab(i);
-									}
+						if (type.equals(XMLConstants.CHARACTER_VALUE)) {
+							tabPanel.addTab("Dialogs", dialogList);
+						}
+
+
+						tabPanel.addTab("Actor Props", props);
+						setTile("ACTOR " + doc.getId(a));
+
+						// select previous selected tab
+						if (selTitle != null) {
+							for (int i = 0; i < tabPanel.getTabCount(); i++) {
+								if (tabPanel.getTitleAt(i).equals(selTitle)) {
+									tabPanel.setTab(i);
 								}
 							}
-						} else {
-							setTile("ACTOR");
 						}
-						
-						faList.addElements(doc, a, "animation");
-						verbList.changeActor(doc, a);
-						dialogList.addElements(doc, a, "dialog");
-						soundList.addElements(doc, a, "sound");
-						props.setActorDocument(doc, a);
-						
+					} else {
+						setTile("ACTOR");
 					}
+
+					faList.addElements(doc, a, "animation");
+					verbList.changeActor(doc, a);
+					dialogList.addElements(doc, a, "dialog");
+					soundList.addElements(doc, a, "sound");
+					props.setActorDocument(doc, a);
 
 				});
 		

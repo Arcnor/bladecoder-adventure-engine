@@ -15,9 +15,6 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.ui;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.bladecoder.engineeditor.Ctx;
 import com.bladecoder.engineeditor.model.Project;
@@ -36,11 +33,6 @@ public class AssetPanel extends HeaderPanel {
 		
 		setContent(tabPanel);
 
-		Ctx.project.addPropertyChangeListener(Project.NOTIFY_PROJECT_LOADED, new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent e) {				
-				setTile("ASSETS - " + Ctx.project.getProjectDir().getName());
-			}
-		});		
+		Ctx.project.addPropertyChangeListener(Project.NOTIFY_PROJECT_LOADED, e -> setTile("ASSETS - " + Ctx.project.getProjectDir().getName()));
 	}
 }

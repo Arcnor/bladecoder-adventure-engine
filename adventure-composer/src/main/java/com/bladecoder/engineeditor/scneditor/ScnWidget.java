@@ -15,8 +15,6 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.scneditor;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 
 import org.w3c.dom.Element;
@@ -108,108 +106,102 @@ public class ScnWidget extends Widget {
 
 		addListener(inputListner);
 
-		Ctx.project.addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent e) {
-				EditorLogger.debug("ScnWidget (Project Listener): " + e.getPropertyName());
+		Ctx.project.addPropertyChangeListener(e -> {
+			EditorLogger.debug("ScnWidget (Project Listener): " + e.getPropertyName());
 
-				if (e.getPropertyName().equals(Project.NOTIFY_SCENE_SELECTED)) {
-					if (!projectLoadedFlag)
-						setSelectedScene(Ctx.project.getSelectedScene());
-				} else if (e.getPropertyName().equals(Project.NOTIFY_ACTOR_SELECTED)) {
-					if (!projectLoadedFlag)
-						setSelectedActor(Ctx.project.getSelectedActor());
-				} else if (e.getPropertyName().equals(Project.NOTIFY_FA_SELECTED)) {
-					if (!projectLoadedFlag)
-						setSelectedFA(Ctx.project.getSelectedFA());
-				} else if (e.getPropertyName().equals(Project.NOTIFY_PROJECT_LOADED)) {
-					projectLoadedFlag = true;
-				}
+			if (e.getPropertyName().equals(Project.NOTIFY_SCENE_SELECTED)) {
+				if (!projectLoadedFlag)
+					setSelectedScene(Ctx.project.getSelectedScene());
+			} else if (e.getPropertyName().equals(Project.NOTIFY_ACTOR_SELECTED)) {
+				if (!projectLoadedFlag)
+					setSelectedActor(Ctx.project.getSelectedActor());
+			} else if (e.getPropertyName().equals(Project.NOTIFY_FA_SELECTED)) {
+				if (!projectLoadedFlag)
+					setSelectedFA(Ctx.project.getSelectedFA());
+			} else if (e.getPropertyName().equals(Project.NOTIFY_PROJECT_LOADED)) {
+				projectLoadedFlag = true;
 			}
 		});
 
-		Ctx.project.getWorld().addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent e) {
-				EditorLogger.debug("ScnWidget (World Listener): " + e.getPropertyName());
-				ChapterDocument doc = Ctx.project.getSelectedChapter();
+		Ctx.project.getWorld().addPropertyChangeListener(e -> {
+			EditorLogger.debug("ScnWidget (World Listener): " + e.getPropertyName());
+			ChapterDocument doc = Ctx.project.getSelectedChapter();
 
-				if (e.getPropertyName().equals("scene")) {
+			if (e.getPropertyName().equals("scene")) {
+				setSelectedScene(Ctx.project.getSelectedScene());
+				setSelectedActor(Ctx.project.getSelectedActor());
+			} else if (e.getPropertyName().equals("bbox")) {
+				Element selActor = (Element) e.getNewValue();
+				String id = doc.getId(selActor);
+				BaseActor a = scn.getActor(id, false);
+				if (a == null)
+					return;
+
+				doc.getBBox(a.getBBox(), selActor);
+				Vector2 p = doc.getPos(selActor);
+				a.setPosition(p.x, p.y);
+			} else if (e.getPropertyName().equals("pos")) {
+				Element selActor = (Element) e.getNewValue();
+				String id = doc.getId(selActor);
+				BaseActor a = scn.getActor(id, false);
+				if (a == null)
+					return;
+				Vector2 p = doc.getPos(selActor);
+				a.setPosition(p.x, p.y);
+			} else if (e.getPropertyName().equals("id")) {
+				String id = (String) e.getOldValue();
+
+				if (selectedActor == null || !selectedActor.getId().equals(id))
+					return;
+
+				scn.removeActor(scn.getActor(id, false));
+				setSelectedActor(null);
+			} else if (e.getPropertyName().equals("animation")) {
+				createAndSelectActor(Ctx.project.getSelectedActor());
+				setSelectedFA(null);
+			} else if (e.getPropertyName().equals("init_animation")) {
+				String initFA = (String) e.getNewValue();
+				((SpriteActor) selectedActor).getRenderer().setInitAnimation(initFA);
+				setSelectedFA(null);
+			} else if (e.getPropertyName().equals("actor")) {
+				createAndSelectActor((Element) e.getNewValue());
+			} else if (e.getPropertyName().equals("layer")) {
+				Element el = (Element) e.getNewValue();
+				String name1 = el.getAttribute("id");
+				NodeList layersNodes = ((Element) el.getParentNode()).getElementsByTagName("layer");
+				boolean visible1 = Boolean.parseBoolean(el.getAttribute("visible"));
+				boolean dynamic = Boolean.parseBoolean(el.getAttribute("dynamic"));
+				// Element previousSibling =
+				// (Element)el.getPreviousSibling();
+
+				SceneLayer layer = scn.getLayer(name1);
+
+				if (layer == null && layersNodes.getLength() > scn.getLayers().size()) {
+					// NEW LAYER CREATED
+					layer = new SceneLayer();
+					layer.setName(name1);
+					layer.setVisible(visible1);
+					layer.setDynamic(dynamic);
+
+					scn.addLayer(layer);
+				} else if (layer.isDynamic() != dynamic) {
+					layer.setDynamic(dynamic);
+				} else if (layer.isVisible() != visible1) {
+					layer.setVisible(visible1);
+				} else {
+					// TODO Handle order and id change
 					setSelectedScene(Ctx.project.getSelectedScene());
 					setSelectedActor(Ctx.project.getSelectedActor());
-				} else if (e.getPropertyName().equals("bbox")) {
-					Element selActor = (Element) e.getNewValue();
-					String id = doc.getId(selActor);
-					BaseActor a = scn.getActor(id, false);
-					if (a == null)
-						return;
+				}
 
-					doc.getBBox(a.getBBox(), selActor);
-					Vector2 p = doc.getPos(selActor);
-					a.setPosition(p.x, p.y);
-				} else if (e.getPropertyName().equals("pos")) {
-					Element selActor = (Element) e.getNewValue();
-					String id = doc.getId(selActor);
-					BaseActor a = scn.getActor(id, false);
-					if (a == null)
-						return;
-					Vector2 p = doc.getPos(selActor);
-					a.setPosition(p.x, p.y);
-				} else if (e.getPropertyName().equals("id")) {
-					String id = (String) e.getOldValue();
-
-					if (selectedActor == null || !selectedActor.getId().equals(id))
-						return;
-
-					scn.removeActor(scn.getActor(id, false));
-					setSelectedActor(null);
-				} else if (e.getPropertyName().equals("animation")) {
-					createAndSelectActor(Ctx.project.getSelectedActor());
+			} else if (e.getPropertyName().equals(BaseDocument.NOTIFY_ELEMENT_DELETED)) {
+				if (((Element) e.getNewValue()).getTagName().equals("actor"))
+					removeActor(doc, (Element) e.getNewValue());
+				else if (((Element) e.getNewValue()).getTagName().equals("animation"))
 					setSelectedFA(null);
-				} else if (e.getPropertyName().equals("init_animation")) {
-					String initFA = (String) e.getNewValue();
-					((SpriteActor) selectedActor).getRenderer().setInitAnimation(initFA);
-					setSelectedFA(null);
-				} else if (e.getPropertyName().equals("actor")) {
-					createAndSelectActor((Element) e.getNewValue());
-				} else if (e.getPropertyName().equals("layer")) {
-					Element el = (Element) e.getNewValue();
-					String name = el.getAttribute("id");
-					NodeList layersNodes = ((Element) el.getParentNode()).getElementsByTagName("layer");
-					boolean visible = Boolean.parseBoolean(el.getAttribute("visible"));
-					boolean dynamic = Boolean.parseBoolean(el.getAttribute("dynamic"));
-					// Element previousSibling =
-					// (Element)el.getPreviousSibling();
-
-					SceneLayer layer = scn.getLayer(name);
-
-					if (layer == null && layersNodes.getLength() > scn.getLayers().size()) {
-						// NEW LAYER CREATED
-						layer = new SceneLayer();
-						layer.setName(name);
-						layer.setVisible(visible);
-						layer.setDynamic(dynamic);
-
-						scn.addLayer(layer);
-					} else if (layer.isDynamic() != dynamic) {
-						layer.setDynamic(dynamic);
-					} else if (layer.isVisible() != visible) {
-						layer.setVisible(visible);
-					} else {
-						// TODO Handle order and id change
-						setSelectedScene(Ctx.project.getSelectedScene());
-						setSelectedActor(Ctx.project.getSelectedActor());
-					}
-
-				} else if (e.getPropertyName().equals(BaseDocument.NOTIFY_ELEMENT_DELETED)) {
-					if (((Element) e.getNewValue()).getTagName().equals("actor"))
-						removeActor(doc, (Element) e.getNewValue());
-					else if (((Element) e.getNewValue()).getTagName().equals("animation"))
-						setSelectedFA(null);
-					else if (((Element) e.getNewValue()).getTagName().equals("layer")) {
-						setSelectedScene(Ctx.project.getSelectedScene());
-						setSelectedActor(Ctx.project.getSelectedActor());
-					}
+				else if (((Element) e.getNewValue()).getTagName().equals("layer")) {
+					setSelectedScene(Ctx.project.getSelectedScene());
+					setSelectedActor(Ctx.project.getSelectedActor());
 				}
 			}
 		});
@@ -307,14 +299,14 @@ public class ScnWidget extends Widget {
 
 			textLayout.setText(defaultFont, str);
 
-			RectangleRenderer.draw((SpriteBatch) batch, 0f, getY() + getHeight() - textLayout.height - 15,
+			RectangleRenderer.draw(batch, 0f, getY() + getHeight() - textLayout.height - 15,
 					textLayout.width + 10, textLayout.height + 10, BLACK_TRANSPARENT);
 			defaultFont.draw(batch, textLayout, 5, getHeight() + getY() - 10);
 
 			batch.setColor(tmp);
 
 		} else {
-			RectangleRenderer.draw((SpriteBatch) batch, getX(), getY(), getWidth(), getHeight(), Color.BLACK);
+			RectangleRenderer.draw(batch, getX(), getY(), getWidth(), getHeight(), Color.BLACK);
 
 			String s;
 
@@ -373,9 +365,9 @@ public class ScnWidget extends Widget {
 
 		float posx = tmp2V2.x - textLayout.width - 20;
 
-		RectangleRenderer.draw((SpriteBatch) batch, posx, tmp2V2.y, textLayout.width + margin * 2, textLayout.height
+		RectangleRenderer.draw(batch, posx, tmp2V2.y, textLayout.width + margin * 2, textLayout.height
 				+ margin * 2, Color.BLACK);
-		RectangleRenderer.draw((SpriteBatch) batch, tmp2V2.x - 20, tmp2V2.y, 20, 2, Color.BLACK);
+		RectangleRenderer.draw(batch, tmp2V2.x - 20, tmp2V2.y, 20, 2, Color.BLACK);
 
 		defaultFont.draw(batch, textLayout, posx + margin, tmp2V2.y + textLayout.height + margin);
 
@@ -388,9 +380,9 @@ public class ScnWidget extends Widget {
 
 		posx = tmp2V2.x - textLayout.width - 20;
 
-		RectangleRenderer.draw((SpriteBatch) batch, posx, tmp2V2.y, textLayout.width + margin * 2, textLayout.height
+		RectangleRenderer.draw(batch, posx, tmp2V2.y, textLayout.width + margin * 2, textLayout.height
 				+ margin * 2, Color.BLACK);
-		RectangleRenderer.draw((SpriteBatch) batch, tmp2V2.x - 20, tmp2V2.y, 20, 2, Color.BLACK);
+		RectangleRenderer.draw(batch, tmp2V2.x - 20, tmp2V2.y, 20, 2, Color.BLACK);
 
 		defaultFont.draw(batch, textLayout, posx + margin, tmp2V2.y + textLayout.height + margin);
 

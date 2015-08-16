@@ -15,7 +15,6 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.model;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
@@ -79,13 +78,7 @@ public class Project extends PropertyChange {
 	private Element selectedActor;
 	private String selectedFA;
 
-	final PropertyChangeListener modelChangeListener = new PropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
-		}
-
-	};
+	final PropertyChangeListener modelChangeListener = evt -> firePropertyChange(evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
 
 	public Project() {
 		world.addPropertyChangeListener(modelChangeListener);
@@ -290,10 +283,7 @@ public class Project extends PropertyChange {
 	public boolean checkProjectStructure() {
 		if (!new File(getModelPath()).exists()) {
 			projectFile = projectFile.getParentFile();
-			if (new File(getModelPath()).exists())
-				return true;
-			else
-				return false;
+			return new File(getModelPath()).exists();
 		}
 
 		return true;

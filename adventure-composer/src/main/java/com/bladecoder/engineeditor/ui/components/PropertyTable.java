@@ -23,7 +23,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 
 public class PropertyTable extends Container<Table> {
 	private static final String[] BOOLEAN_VALUES = {"", "true", "false"};
@@ -83,12 +82,7 @@ public class PropertyTable extends Container<Table> {
 			if(type == Types.INTEGER)
 				tf.setTextFieldFilter(new TextField.TextFieldFilter.DigitsOnlyFilter());
 			
-			tf.setTextFieldListener(new TextFieldListener() {
-				@Override
-				public void keyTyped(TextField actor, char c) {
-					updateModel(actor.getName(), ((TextField)actor).getText());
-				}
-			});			
+			tf.setTextFieldListener((actor, c) -> updateModel(actor.getName(), actor.getText()));
 			
 			
 //			tf.addListener(new FocusListener() {
