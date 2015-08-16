@@ -47,21 +47,21 @@ public class EditActorDialog extends EditElementDialog {
 			"Image actors show image files"
 			};
 
-	public static final int INPUT_ACTOR_TYPE = 0;
-	public static final int INPUT_ACTOR_ID = 1;
-	public static final int INPUT_ACTOR_LAYER = 2;
-	public static final int INPUT_VISIBLE = 3;
-	public static final int INPUT_INTERACTION = 4;
-	public static final int INPUT_DESCRIPTION = 5;
-	public static final int INPUT_STATE = 6;
-	public static final int INPUT_ACTOR_RENDERER = 7;
-	public static final int INPUT_DEPTH_TYPE = 8;
-	public static final int INPUT_SCALE = 9;
-	public static final int INPUT_ZINDEX = 10;
-	public static final int INPUT_WALKING_SPEED = 11;
-	public static final int INPUT_SPRITE_DIMENSIONS = 12;
-	public static final int INPUT_CAMERA_NAME = 13;
-	public static final int INPUT_CAMERA_FOV = 14;
+	private static final int INPUT_ACTOR_TYPE = 0;
+	private static final int INPUT_ACTOR_ID = 1;
+	private static final int INPUT_ACTOR_LAYER = 2;
+	private static final int INPUT_VISIBLE = 3;
+	private static final int INPUT_INTERACTION = 4;
+	private static final int INPUT_DESCRIPTION = 5;
+	private static final int INPUT_STATE = 6;
+	private static final int INPUT_ACTOR_RENDERER = 7;
+	private static final int INPUT_DEPTH_TYPE = 8;
+	private static final int INPUT_SCALE = 9;
+	private static final int INPUT_ZINDEX = 10;
+	private static final int INPUT_WALKING_SPEED = 11;
+	private static final int INPUT_SPRITE_DIMENSIONS = 12;
+	private static final int INPUT_CAMERA_NAME = 13;
+	private static final int INPUT_CAMERA_FOV = 14;
 
 	private InputPanel typePanel;
 	private InputPanel rendererPanel;

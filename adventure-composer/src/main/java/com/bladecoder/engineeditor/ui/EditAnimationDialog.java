@@ -44,7 +44,7 @@ import com.bladecoder.engineeditor.utils.EditorLogger;
 
 public class EditAnimationDialog extends EditElementDialog {
 	public static final String INFO = "Define sprites and animations";
-	
+
 	private static final int SOURCE_INPUTPANEL = 0;
 	private static final int ATLAS_INPUTPANEL = 1;
 	private static final int ID_INPUTPANEL = 2;
@@ -52,7 +52,12 @@ public class EditAnimationDialog extends EditElementDialog {
 	private static final int SPEED_INPUTPANEL = 4;
 	private static final int DELAY_INPUTPANEL = 5;
 	private static final int COUNT_INPUTPANEL = 6;
-	
+	private static final int IN_DISTANCE_INPUTPANEL = 7;
+	private static final int OUT_DISTANCE_INPUTPANEL = 8;
+	private static final int SOUND_INPUTPANEL = 9;
+	private static final int PRELOAD_INPUTPANEL = 10;
+	private static final int DISPOSE_INPUTPANEL = 11;
+
 	private static final String ATLAS_EXT = ".atlas";
 
 	private InputPanel[] inputs = new InputPanel[12];
@@ -69,41 +74,41 @@ public class EditAnimationDialog extends EditElementDialog {
 
 		setInfo(INFO);
 
-		inputs[0] = InputPanelFactory.createInputPanel(skin, "Source",
+		inputs[SOURCE_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Source",
 				"Select the source where the sprite or animation is defined",
 				new String[0], true);
-		inputs[1] = InputPanelFactory.createInputPanel(skin, "Atlas",
+		inputs[ATLAS_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Atlas",
 				"Select the atlas for the selected Spine skeleton",
 				getAtlases(), true);
-		inputs[2] = InputPanelFactory.createInputPanel(skin, "ID",
+		inputs[ID_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "ID",
 				"Select the id of the animation", new String[0], true);
-		inputs[3] = InputPanelFactory.createInputPanel(skin, "Animation type",
+		inputs[TYPE_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Animation type",
 				"Select the type of the animation",
 				ChapterDocument.ANIMATION_TYPES, true);
-		inputs[4] = InputPanelFactory.createInputPanel(skin, "Speed",
+		inputs[SPEED_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Speed",
 				"Select the speed of the animation in secods",
 				Param.Type.FLOAT, true, "1.0");
-		inputs[5] = InputPanelFactory.createInputPanel(skin, "Delay",
+		inputs[DELAY_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Delay",
 				"Select the delay between repeats in seconds",
 				Param.Type.FLOAT, false);
-		inputs[6] = InputPanelFactory.createInputPanel(skin, "Count", "Select the repeat times",
+		inputs[COUNT_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Count", "Select the repeat times",
 				Param.Type.INTEGER, false);
-		inputs[7] = InputPanelFactory.createInputPanel(
+		inputs[IN_DISTANCE_INPUTPANEL] = InputPanelFactory.createInputPanel(
 				skin,
 				"In Dist",
 				"Select the distance in pixels to add to the actor position when the sprite is displayed",
 				Param.Type.VECTOR2, false);
-		inputs[8] = InputPanelFactory.createInputPanel(
+		inputs[OUT_DISTANCE_INPUTPANEL] = InputPanelFactory.createInputPanel(
 				skin,
 				"Out Dist",
 				"Select the distance in pixels to add to the actor position when the sprite is changed",
 				Param.Type.VECTOR2, false);
-		inputs[9] = InputPanelFactory.createInputPanel(skin, "Sound",
+		inputs[SOUND_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Sound",
 				"Select the sound ID that will be play when displayed");
-		inputs[10] = InputPanelFactory.createInputPanel(skin, "Preload",
+		inputs[PRELOAD_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Preload",
 				"Preload the animation when the scene is loaded",
 				Param.Type.BOOLEAN, true, "true", null);
-		inputs[11] = InputPanelFactory.createInputPanel(skin, "Dispose When Played",
+		inputs[DISPOSE_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Dispose When Played",
 				"Dispose de animation when the animation is played",
 				Param.Type.BOOLEAN, true, "false", null);
 
