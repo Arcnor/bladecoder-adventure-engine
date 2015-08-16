@@ -16,8 +16,6 @@
 package com.bladecoder.engineeditor.ui;
 
 import java.awt.Desktop;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -33,6 +31,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.bladecoder.engineeditor.Ctx;
+import com.bladecoder.engineeditor.model.BaseDocument;
 import com.bladecoder.engineeditor.model.Project;
 import com.bladecoder.engineeditor.utils.RunProccess;
 import javafx.application.Platform;
@@ -53,106 +52,48 @@ public class ProjectToolbar extends Table {
 	public ProjectToolbar(Skin skin) {
 		super(skin);
 		this.skin = skin;
-		left();
-		newBtn = new ImageButton(skin);
-		saveBtn = new ImageButton(skin);
-		loadBtn = new ImageButton(skin);
-		packageBtn = new ImageButton(skin);
-		exitBtn = new ImageButton(skin);
-		playBtn = new ImageButton(skin);
-		assetsBtn = new ImageButton(skin);
-		atlasBtn = new ImageButton(skin);
 
-		addToolBarButton(skin, newBtn, "ic_new", "New", "Create a new project");
-		addToolBarButton(skin, loadBtn, "ic_load", "Load", "Load an existing project");
-		addToolBarButton(skin, saveBtn, "ic_save", "Save", "Save the current project");
-		addToolBarButton(skin, exitBtn, "ic_quit", "Exit", "Save changes and exits");
+		left();
+
+		newBtn = addToolBarButton(skin, this::newProject, "ic_new", "New", "Create a new project");
+		loadBtn = addToolBarButton(skin, this::loadProject, "ic_load", "Load", "Load an existing project");
+		saveBtn = addToolBarButton(skin, this::saveProject, "ic_save", "Save", "Save the current project");
+		exitBtn = addToolBarButton(skin, this::exit, "ic_quit", "Exit", "Save changes and exits");
+
 		row();
 
-		addToolBarButton(skin, playBtn, "ic_play", "Play", "Play Adventure");
-		addToolBarButton(skin, packageBtn, "ic_package", "Package", "Package the game for distribution");
-		addToolBarButton(skin, assetsBtn, "ic_assets", "Assets", "Open assets folder");
-		addToolBarButton(skin, atlasBtn, "ic_atlases", "Atlas", "Create Atlas");
+		packageBtn = addToolBarButton(skin, this::packageProject, "ic_package", "Package", "Package the game for distribution");
+		playBtn = addToolBarButton(skin, this::play, "ic_play", "Play", "Play Adventure");
+		assetsBtn = addToolBarButton(skin, this::openProjectFolder, "ic_assets", "Assets", "Open assets folder");
+		atlasBtn = addToolBarButton(skin, this::createAtlas, "ic_atlases", "Atlas", "Create Atlas");
 
 		newBtn.setDisabled(false);
 		loadBtn.setDisabled(false);
 		exitBtn.setDisabled(false);
 
-		newBtn.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				newProject();
-			}
+		Ctx.project.getWorld().addPropertyChangeListener(e -> {
+			saveBtn.setDisabled(e.getPropertyName().equals(BaseDocument.NOTIFY_DOCUMENT_SAVED));
 		});
 
-		loadBtn.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				loadProject();
-			}
-		});
-
-		exitBtn.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				exit();
-			}
-		});
-
-		saveBtn.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				saveProject();
-			}
-		});
-
-		playBtn.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				play();
-			}
-		});
-
-		packageBtn.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				packageProject();
-			}
-		});
-
-		assetsBtn.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				openProjectFolder();
-			}
-		});
-
-		atlasBtn.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				createAtlas();
-			}
-		});
-
-		Ctx.project.getWorld().addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent e) {
-				saveBtn.setDisabled(e.getPropertyName().equals("DOCUMENT_SAVED"));
-			}
-		});
-
-		Ctx.project.addPropertyChangeListener(Project.NOTIFY_PROJECT_LOADED, new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent arg0) {
-				packageBtn.setDisabled(Ctx.project.getProjectDir() == null);
-				playBtn.setDisabled(Ctx.project.getProjectDir() == null);
-				assetsBtn.setDisabled(Ctx.project.getProjectDir() == null);
-				atlasBtn.setDisabled(Ctx.project.getProjectDir() == null);
-			}
+		Ctx.project.addPropertyChangeListener(Project.NOTIFY_PROJECT_LOADED, arg0 -> {
+			packageBtn.setDisabled(Ctx.project.getProjectDir() == null);
+			playBtn.setDisabled(Ctx.project.getProjectDir() == null);
+			assetsBtn.setDisabled(Ctx.project.getProjectDir() == null);
+			atlasBtn.setDisabled(Ctx.project.getProjectDir() == null);
 		});
 	}
 
-	private void addToolBarButton(Skin skin, ImageButton button, String icon, String text, String tooltip) {
+	private ImageButton addToolBarButton(Skin skin, Runnable changeListenerFunction,
+	                                     String icon, String text, String tooltip) {
+		ImageButton button = new ImageButton(skin);
+
+		button.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				changeListenerFunction.run();
+			}
+		});
+
 		ImageButtonStyle style = new ImageButtonStyle(skin.get(ButtonStyle.class));
 		TextureRegion image = Ctx.assetManager.getIcon(icon);
 		style.imageUp = new TextureRegionDrawable(image);
@@ -170,6 +111,8 @@ public class ProjectToolbar extends Table {
 
 		add(button);
 		button.setDisabled(true);
+
+		return button;
 	}
 
 	private void newProject() {
@@ -183,30 +126,27 @@ public class ProjectToolbar extends Table {
 	}
 
 	private void loadProject() {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				final DirectoryChooser chooser = new DirectoryChooser();
-				chooser.setTitle("Select the project to load");
-				chooser.setInitialDirectory(Ctx.project.getProjectDir() != null ? Ctx.project.getProjectDir()
-						: new File("."));
+		Platform.runLater(() -> {
+			final DirectoryChooser chooser = new DirectoryChooser();
+			chooser.setTitle("Select the project to load");
+			chooser.setInitialDirectory(Ctx.project.getProjectDir() != null ? Ctx.project.getProjectDir()
+					: new File("."));
 
-				final File dir = chooser.showDialog(null);
-				if (dir == null) {
-					return;
-				}
+			final File dir = chooser.showDialog(null);
+			if (dir == null) {
+				return;
+			}
 
-				try {
-					Ctx.project.saveProject();
-					Ctx.project.loadProject(dir);
-					playBtn.setDisabled(false);
-					packageBtn.setDisabled(false);
-				} catch (Exception ex) {
-					String msg = "Something went wrong while loading the project.\n\n" + ex.getClass().getSimpleName()
-							+ " - " + ex.getMessage();
-					Ctx.msg.show(getStage(), msg, 2);
-					ex.printStackTrace();
-				}
+			try {
+				Ctx.project.saveProject();
+				Ctx.project.loadProject(dir);
+				playBtn.setDisabled(false);
+				packageBtn.setDisabled(false);
+			} catch (Exception ex) {
+				String msg = "Something went wrong while loading the project.\n\n" + ex.getClass().getSimpleName()
+						+ " - " + ex.getMessage();
+				Ctx.msg.show(getStage(), msg, 2);
+				ex.printStackTrace();
 			}
 		});
 	}
