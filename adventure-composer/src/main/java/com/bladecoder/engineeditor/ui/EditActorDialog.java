@@ -47,6 +47,22 @@ public class EditActorDialog extends EditElementDialog {
 			"Image actors show image files"
 			};
 
+	public static final int INPUT_ACTOR_TYPE = 0;
+	public static final int INPUT_ACTOR_ID = 1;
+	public static final int INPUT_ACTOR_LAYER = 2;
+	public static final int INPUT_VISIBLE = 3;
+	public static final int INPUT_INTERACTION = 4;
+	public static final int INPUT_DESCRIPTION = 5;
+	public static final int INPUT_STATE = 6;
+	public static final int INPUT_ACTOR_RENDERER = 7;
+	public static final int INPUT_DEPTH_TYPE = 8;
+	public static final int INPUT_SCALE = 9;
+	public static final int INPUT_ZINDEX = 10;
+	public static final int INPUT_WALKING_SPEED = 11;
+	public static final int INPUT_SPRITE_DIMENSIONS = 12;
+	public static final int INPUT_CAMERA_NAME = 13;
+	public static final int INPUT_CAMERA_FOV = 14;
+
 	private InputPanel typePanel;
 	private InputPanel rendererPanel;
 
@@ -60,66 +76,65 @@ public class EditActorDialog extends EditElementDialog {
 			Element e) {
 		super(skin);
 
-		inputs[0] = InputPanelFactory.createInputPanel(skin, "Actor Type",
+		inputs[INPUT_ACTOR_TYPE] = InputPanelFactory.createInputPanel(skin, "Actor Type",
 				"Actors can be from different types",
 				ChapterDocument.ACTOR_TYPES, true);
 
-		inputs[1] = InputPanelFactory.createInputPanel(skin, "Actor ID",
+		inputs[INPUT_ACTOR_ID] = InputPanelFactory.createInputPanel(skin, "Actor ID",
 				"IDs can not contain '.' or '_' characters.", true);
-		
 
-		inputs[2] = InputPanelFactory.createInputPanel(skin, "Actor Layer",
+		inputs[INPUT_ACTOR_LAYER] = InputPanelFactory.createInputPanel(skin, "Actor Layer",
 				"The layer for drawing order", getLayers(parent), true);
 		
-		inputs[3] = InputPanelFactory.createInputPanel(skin, "Visible", "The actor visibility.",
+		inputs[INPUT_VISIBLE] = InputPanelFactory.createInputPanel(skin, "Visible", "The actor visibility.",
 				Param.Type.BOOLEAN, false);
 		
 		
-		inputs[4] = InputPanelFactory.createInputPanel(skin, "Interaction",
+		inputs[INPUT_INTERACTION] = InputPanelFactory.createInputPanel(skin, "Interaction",
 				"True when the actor reacts to the user input.",
 				Param.Type.BOOLEAN, false);
 
-		inputs[5] = InputPanelFactory.createInputPanel(skin, "Description",
+		inputs[INPUT_DESCRIPTION] = InputPanelFactory.createInputPanel(skin, "Description",
 				"The text showed when the cursor is over the actor.");
-		inputs[6] = InputPanelFactory.createInputPanel(
+		inputs[INPUT_STATE] = InputPanelFactory.createInputPanel(
 				skin,
 				"State",
 				"Initial state of the actor. Actors can be in differentes states during the game.");		
 		
-		inputs[7] = InputPanelFactory.createInputPanel(skin, "Actor Renderer",
+		inputs[INPUT_ACTOR_RENDERER] = InputPanelFactory.createInputPanel(skin, "Actor Renderer",
 				"Actors can be renderer from several sources",
 				ChapterDocument.ACTOR_RENDERERS, true);
 
-		inputs[8] = InputPanelFactory.createInputPanel(skin, "Depth Type",
+		inputs[INPUT_DEPTH_TYPE] = InputPanelFactory.createInputPanel(skin, "Depth Type",
 				"Scene fake depth for scaling", new String[] { "none",
 						"vector"}, true);
 		
-		inputs[9] = InputPanelFactory.createInputPanel(skin, "Scale",
+		inputs[INPUT_SCALE] = InputPanelFactory.createInputPanel(skin, "Scale",
 				"The sprite scale", Param.Type.FLOAT, false, "1",
 				null);
 		
-		inputs[10] = InputPanelFactory.createInputPanel(skin, "zIndex",
+		inputs[INPUT_ZINDEX] = InputPanelFactory.createInputPanel(skin, "zIndex",
 				"The order to draw.", Param.Type.FLOAT, false, "0",
 				null);
 		
-		inputs[11] = InputPanelFactory.createInputPanel(skin, "Walking Speed",
+		inputs[INPUT_WALKING_SPEED] = InputPanelFactory.createInputPanel(skin, "Walking Speed",
 				"The walking speed in pix/sec. Default 700.", Param.Type.FLOAT,
 				false);
 		
-		inputs[12] = InputPanelFactory.createInputPanel(skin, "Sprite Dimensions",
+		inputs[INPUT_SPRITE_DIMENSIONS] = InputPanelFactory.createInputPanel(skin, "Sprite Dimensions",
 				"The size of the 3d sprite", Param.Type.DIMENSION, true);
-		inputs[13] = InputPanelFactory.createInputPanel(skin, "Camera Name",
+		inputs[INPUT_CAMERA_NAME] = InputPanelFactory.createInputPanel(skin, "Camera Name",
 				"The name of the camera in the model", Param.Type.STRING, true,
 				"Camera", null);
-		inputs[14] = InputPanelFactory.createInputPanel(skin, "Camera FOV",
+		inputs[INPUT_CAMERA_FOV] = InputPanelFactory.createInputPanel(skin, "Camera FOV",
 				"The camera field of view", Param.Type.FLOAT, true, "49.3",
 				null);
 		
 
 		setInfo(TYPES_INFO[0]);
 
-		typePanel = inputs[0];
-		rendererPanel = inputs[1];
+		typePanel = inputs[INPUT_ACTOR_TYPE];
+		rendererPanel = inputs[INPUT_ACTOR_ID];
 
 		typePanel.getField()
 				.addListener(new ChangeListener() {
@@ -166,24 +181,24 @@ public class EditActorDialog extends EditElementDialog {
 		
 		if (!ChapterDocument.ACTOR_TYPES[i]
 				.equals(XMLConstants.OBSTACLE_VALUE)) {
-			setVisible(inputs[4],true);
-			setVisible(inputs[5],true);
-			setVisible(inputs[6],true);
+			setVisible(inputs[INPUT_INTERACTION],true);
+			setVisible(inputs[INPUT_DESCRIPTION],true);
+			setVisible(inputs[INPUT_STATE],true);
 		}
 
 		if (ChapterDocument.ACTOR_TYPES[i]
 				.equals(XMLConstants.SPRITE_VALUE) || 
 				ChapterDocument.ACTOR_TYPES[i]
 						.equals(XMLConstants.CHARACTER_VALUE)) {
-			setVisible(inputs[7],true);
-			setVisible(inputs[8],true);
-			setVisible(inputs[9],true);
-			setVisible(inputs[10],true);
+			setVisible(inputs[INPUT_ACTOR_RENDERER],true);
+			setVisible(inputs[INPUT_DEPTH_TYPE],true);
+			setVisible(inputs[INPUT_SCALE],true);
+			setVisible(inputs[INPUT_ZINDEX],true);
 		}
 		
 		if (ChapterDocument.ACTOR_TYPES[i]
 						.equals(XMLConstants.CHARACTER_VALUE)) {
-			setVisible(inputs[11],true);
+			setVisible(inputs[INPUT_WALKING_SPEED],true);
 		}
 		
 		rendererChanged();
@@ -194,16 +209,16 @@ public class EditActorDialog extends EditElementDialog {
 
 //		setInfo(RENDERERS_INFO[i]);
 
-		setVisible(inputs[12],false);
-		setVisible(inputs[13],false);
-		setVisible(inputs[14],false);
+		setVisible(inputs[INPUT_SPRITE_DIMENSIONS],false);
+		setVisible(inputs[INPUT_CAMERA_NAME],false);
+		setVisible(inputs[INPUT_CAMERA_FOV],false);
 
 		if (rendererPanel.isVisible() &&
 				ChapterDocument.ACTOR_RENDERERS[i]
 				.equals(XMLConstants.S3D_VALUE)) {
-			setVisible(inputs[12],true);
-			setVisible(inputs[13],true);
-			setVisible(inputs[14],true);
+			setVisible(inputs[INPUT_SPRITE_DIMENSIONS],true);
+			setVisible(inputs[INPUT_CAMERA_NAME],true);
+			setVisible(inputs[INPUT_CAMERA_FOV],true);
 		}
 	}
 	
