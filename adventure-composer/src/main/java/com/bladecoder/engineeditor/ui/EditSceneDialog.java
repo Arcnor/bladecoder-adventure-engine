@@ -46,8 +46,20 @@ import com.bladecoder.engineeditor.utils.EditorLogger;
 public class EditSceneDialog extends EditElementDialog {
 
 	public static final String INFO = "An adventure is composed of many scenes (screens).\n" +
-			"Inside a scene there are actors and a 'player'.\nThe player/user can interact with the actors throught 'verbs'.";
-	
+			"Inside a scene there are actors and a 'player'.\nThe player/user can interact with the actors through 'verbs'.";
+
+	private static final int SCENE_ID_INPUTPANEL = 0;
+	private static final int BACK_ATLAS_INPUTPANEL = 1;
+	private static final int BACK_REGION_ID_INPUTPANEL = 2;
+	private static final int LIGHTMAP_ATLAS_INPUTPANEL = 3;
+	private static final int LIGHTMAP_REGION_ID_INPUTPANEL = 4;
+	private static final int DEPTH_VECTOR_INPUTPANEL = 5;
+	private static final int STATE_INPUTPANEL = 6;
+	private static final int MUSIC_INPUTPANEL = 7;
+	private static final int LOOP_INPUTPANEL = 8;
+	private static final int INITIAL_DELAY_INPUTPANEL = 9;
+	private static final int REPEAT_INPUTPANEL = 10;
+
 	private String atlasList[] = getAtlasList();
 	private String musicList[] = getMusicList();
 	
@@ -67,27 +79,27 @@ public class EditSceneDialog extends EditElementDialog {
 		
 		super(skin);
 		
-		inputs[0] = InputPanelFactory.createInputPanel(skin, "Scene ID",
+		inputs[SCENE_ID_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Scene ID",
 				"The ID is mandatory for scenes. \nIDs can not contain '.' or '_' characters.");
-		inputs[1] = InputPanelFactory.createInputPanel(skin, "Background Atlas",
+		inputs[BACK_ATLAS_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Background Atlas",
 				"The atlas where the background for the scene is located", atlasList, false);
-		inputs[2] = InputPanelFactory.createInputPanel(skin, "Background Region Id",
+		inputs[BACK_REGION_ID_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Background Region Id",
 				"The region id for the background.", new String[0], false);
-		inputs[3] = InputPanelFactory.createInputPanel(skin, "Lightmap Atlas",
+		inputs[LIGHTMAP_ATLAS_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Lightmap Atlas",
 						"The atlas where the lightmap for the scene is located", atlasList, false);	
-		inputs[4] = InputPanelFactory.createInputPanel(skin, "Lightmap Region Id",
+		inputs[LIGHTMAP_REGION_ID_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Lightmap Region Id",
 				"The region id for the lightmap", new String[0], false);
-		inputs[5] = InputPanelFactory.createInputPanel(skin, "Depth Vector",
+		inputs[DEPTH_VECTOR_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Depth Vector",
 						"X: the actor 'y' position for a 0.0 scale, Y: the actor 'y' position for a 1.0 scale.", Param.Type.VECTOR2, false);
-		inputs[6] = InputPanelFactory.createInputPanel(skin, "State",
+		inputs[STATE_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "State",
 				"The initial state for the scene.", false);
-		inputs[7] = InputPanelFactory.createInputPanel(skin, "Music Filename",
+		inputs[MUSIC_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Music Filename",
 				"The music for the scene", musicList, false);
-		inputs[8] = InputPanelFactory.createInputPanel(skin, "Loop Music",
+		inputs[LOOP_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Loop Music",
 				"If the music is playing in looping", Param.Type.BOOLEAN, false);
-		inputs[9] = InputPanelFactory.createInputPanel(skin, "Initial music delay",
+		inputs[INITIAL_DELAY_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Initial music delay",
 				"The time to wait before playing", Param.Type.FLOAT, false);
-		inputs[10] = InputPanelFactory.createInputPanel(skin, "Repeat music delay",
+		inputs[REPEAT_INPUTPANEL] = InputPanelFactory.createInputPanel(skin, "Repeat music delay",
 				"The time to wait before repetitions", Param.Type.FLOAT, false);		
 		
 		bgImage = new Image();
@@ -95,16 +107,14 @@ public class EditSceneDialog extends EditElementDialog {
 		infoContainer = new Container<Image>(bgImage);
 		setInfo(INFO);
 		
-		inputs[0].setMandatory(true);
+		inputs[SCENE_ID_INPUTPANEL].setMandatory(true);
 
-		
-		
-		inputs[1].getField().addListener(new ChangeListener() {
+		inputs[BACK_ATLAS_INPUTPANEL].getField().addListener(new ChangeListener() {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				try {
-					fillBGRegions(inputs[1], inputs[2]);
+					fillBGRegions(inputs[BACK_ATLAS_INPUTPANEL], inputs[BACK_REGION_ID_INPUTPANEL]);
 				} catch(Exception e) {
 					Ctx.msg.show(getStage(), "Error loading regions from selected atlas", 4);
 				}
@@ -112,20 +122,20 @@ public class EditSceneDialog extends EditElementDialog {
 		});
 		
 
-		inputs[2].getField()
+		inputs[BACK_REGION_ID_INPUTPANEL].getField()
 			.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				showBgImage(inputs[2].getText());
+				showBgImage(inputs[BACK_REGION_ID_INPUTPANEL].getText());
 			}
 		});
 		
-		inputs[3].getField().addListener(new ChangeListener() {
+		inputs[LIGHTMAP_ATLAS_INPUTPANEL].getField().addListener(new ChangeListener() {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				try {
-					fillLightmapRegions(inputs[3], inputs[4]);
+					fillLightmapRegions(inputs[LIGHTMAP_ATLAS_INPUTPANEL], inputs[LIGHTMAP_REGION_ID_INPUTPANEL]);
 				} catch(Exception e) {
 					Ctx.msg.show(getStage(), "Error loading regions from selected atlas", 4);
 				}
@@ -133,7 +143,7 @@ public class EditSceneDialog extends EditElementDialog {
 		});		
 		
 		try {
-			fillBGRegions(inputs[1], inputs[2]);
+			fillBGRegions(inputs[BACK_ATLAS_INPUTPANEL], inputs[BACK_REGION_ID_INPUTPANEL]);
 		} catch(Exception e2) {
 			EditorLogger.error("Error loading regions from selected atlas");
 		}
@@ -167,7 +177,7 @@ public class EditSceneDialog extends EditElementDialog {
 			atlas = null;
 		}
 		
-		if(inputs[1].getText().isEmpty()) {
+		if(inputs[BACK_ATLAS_INPUTPANEL].getText().isEmpty()) {
 			setInfoWidget(new Label(INFO, getSkin()));
 			return;
 		}
