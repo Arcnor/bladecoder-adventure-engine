@@ -17,6 +17,7 @@ package com.bladecoder.engineeditor.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Optional;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -108,10 +109,8 @@ public class ChapterDocument extends BaseDocument {
 		return actions;
 	}
 
-	public NodeList getScenes() {
-		NodeList s = getElement().getElementsByTagName(XMLConstants.SCENE_TAG);
-
-		return s;
+	public Collection<Scene> getScenes() {
+		return blueprintChapter.getScenes();
 	}
 
 	public void addActor(Element scn, Element e) {

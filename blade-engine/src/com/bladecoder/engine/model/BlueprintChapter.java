@@ -19,7 +19,7 @@ public class BlueprintChapter extends AbstractModel {
 	private Map<String, Scene> scenes;
 
 	@JsonProperty
-	private Collection<Scene> getScenes() {
+	public Collection<Scene> getScenes() {
 		return scenes.values();
 	}
 

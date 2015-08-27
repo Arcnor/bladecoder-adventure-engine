@@ -15,11 +15,8 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.ui.components;
 
-import com.bladecoder.engine.model.AbstractModel;
 import com.bladecoder.engine.model.BaseActor;
 import com.bladecoder.engine.model.Scene;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -29,17 +26,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.bladecoder.engine.actions.Param;
 import com.bladecoder.engineeditor.Ctx;
+import com.bladecoder.engineeditor.utils.ModelUtils;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class SceneActorInputPanel extends InputPanel {
-	SelectBox<String> scene;
-	EditableSelectBox<String> actor;
-	Table panel;
+	private SelectBox<String> scene;
+	private EditableSelectBox<String> actor;
+	private Table panel;
 
 	SceneActorInputPanel(Skin skin, String title, String desc, boolean mandatory, String defaultValue) {
 		panel = new Table(skin);
@@ -51,37 +46,26 @@ public class SceneActorInputPanel extends InputPanel {
 		panel.add(new Label("  Actor ", skin));
 		panel.add(actor);
 
-		NodeList scenes = Ctx.project.getSelectedChapter().getScenes();
-		int l = scenes.getLength() + 1;
-		
-		String values[] = new String[l];
-
-		values[0] = "";
-
-		for (int i = 0; i < scenes.getLength(); i++) {
-			values[i + 1] = ((Element) scenes.item(i)).getAttribute("id");
-		}
-		
 		scene.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				sceneSelected();
 			}
-		});		
+		});
+
+		final Collection<Scene> scenes = Ctx.project.getSelectedChapter().getScenes();
+
+		scene.setItems(ModelUtils.listIds(scenes, true));
+
+		// FIXME: This is also done by init(), except for the scene.setSelectedIndex() part
+		if (defaultValue != null)
+			setText(defaultValue);
+		else
+			scene.setSelectedIndex(0);
 
 		init(skin, title, desc, panel, mandatory, defaultValue);
-		scene.setItems(values);
-
-		if (values.length > 0) {
-			if (defaultValue != null)
-				setText(defaultValue);
-			else
-				scene.setSelectedIndex(0);
-		}
-		
-		
 	}
-	
+
 	private void sceneSelected() {
 		String s = scene.getSelected();
 
@@ -95,13 +79,10 @@ public class SceneActorInputPanel extends InputPanel {
 			actor.setItems();
 			return;
 		}
-		final Collection<BaseActor> actors = scene.get().getActors().values();
-		final List<String> values = actors.stream().map(AbstractModel::getId).collect(Collectors.toCollection(ArrayList::new));
-		if (!isMandatory()) {
-			values.add(0, "");
-		}
 
-		actor.setItems(values.toArray(new String[values.size()]));
+		final Collection<BaseActor> actors = scene.get().getActors().values();
+
+		actor.setItems(ModelUtils.listIds(actors, isMandatory()));
 	}
 	
 	public String getText() {

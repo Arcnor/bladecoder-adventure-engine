@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.bladecoder.engine.actions.ModelDescription;
 import com.bladecoder.engine.actions.ModelPropertyType;
 import com.bladecoder.engine.actions.Param;
+import com.bladecoder.engine.model.AbstractModel;
 import com.bladecoder.engine.model.ModelTypeLink;
 import com.bladecoder.engineeditor.ui.components.EditableSelectBox;
 import com.bladecoder.engineeditor.ui.components.InputPanel;
@@ -31,8 +32,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ModelUtils {
+	public static String[] listIds(Collection<? extends AbstractModel> models, boolean mandatory) {
+		final ArrayList<String> result = models.stream().map(AbstractModel::getId).collect(Collectors.toCollection(ArrayList::new));
+		if (!mandatory) {
+			result.add(0, "");
+		}
+		return result.toArray(new String[result.size()]);
+	}
+
 	public static String getInfo(@Nonnull Class<?> clazz) {
 		ModelDescription modelDescription = clazz.getAnnotation(ModelDescription.class);
 		if (modelDescription == null) {
