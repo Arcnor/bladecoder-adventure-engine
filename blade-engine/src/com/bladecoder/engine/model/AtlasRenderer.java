@@ -16,7 +16,10 @@
 package com.bladecoder.engine.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -37,16 +40,30 @@ import com.bladecoder.engine.anim.Tween;
 import com.bladecoder.engine.assets.EngineAssetManager;
 import com.bladecoder.engine.util.EngineLogger;
 import com.bladecoder.engine.util.RectangleRenderer;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @JsonTypeName("atlas")
 public class AtlasRenderer implements ActorRenderer {
 	private final static float DEFAULT_DIM = 200;
 
-	private HashMap<String, AnimationDesc> fanims = new HashMap<String, AnimationDesc>();
-	
-	/** Starts this anim the first time that the scene is loaded */
+	@JsonProperty
+	@JsonPropertyDescription("Starts this animation the first time the scene is loaded")
 	private String initAnimation;
+
+	@JsonProperty("animations")
+	private Collection<AtlasAnimationDesc> getAnimationList() {
+		return fanims.values();
+	}
+
+	private void setAnimationList(Collection<AtlasAnimationDesc> animationList) {
+		for (AtlasAnimationDesc desc : animationList) {
+			fanims.put(desc.getId(), desc);
+		}
+	}
+
+	private Map<String, AtlasAnimationDesc> fanims = new LinkedHashMap<>();
 
 	private AtlasAnimationDesc currentAnimation;
 
@@ -157,8 +174,8 @@ public class AtlasRenderer implements ActorRenderer {
 	}
 
 	@Override
-	public HashMap<String, AnimationDesc> getAnimations() {
-		return (HashMap<String, AnimationDesc>)fanims;
+	public Map<String, ? extends AnimationDesc> getAnimations() {
+		return fanims;
 	}
 
 	@Override

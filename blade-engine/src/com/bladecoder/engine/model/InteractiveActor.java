@@ -15,7 +15,9 @@
  ******************************************************************************/
 package com.bladecoder.engine.model;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
@@ -55,7 +57,33 @@ public class InteractiveActor extends BaseActor implements AssetConsumer {
 	protected float zIndex;
 
 	protected VerbManager verbs = new VerbManager();
-	protected HashMap<String, SoundFX> sounds;
+
+	@JsonProperty
+	private Collection<Verb> getVerbs() {
+		return verbs.getVerbs().values();
+	}
+
+	private void setVerbs(Collection<Verb> verbs) {
+		for (Verb verb : verbs) {
+			this.verbs.addVerb(verb.getId(), verb);
+		}
+	}
+
+	protected Map<String, SoundFX> sounds = new HashMap<>();
+
+	@JsonProperty
+	private Collection<SoundFX> getSounds() {
+		return sounds.values();
+	}
+
+	private void setSounds(Collection<SoundFX> sounds) {
+		this.sounds = new HashMap<>();
+
+		for (SoundFX sound : sounds) {
+			this.sounds.put(sound.getId(), sound);
+		}
+	}
+
 	private String playingSound;	
 	
 	/** State to know when the player is inside this actor to trigger the enter/exit verbs */ 

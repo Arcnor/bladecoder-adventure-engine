@@ -51,7 +51,7 @@ public class AnimationAction implements Action {
 	@ModelPropertyType(Type.BOOLEAN)
 	private boolean wait = true;
 
-	@JsonProperty(value = "animation_type", required = true, defaultValue = "SPRITE_DEFINED")
+	@JsonProperty(value = "animationType", required = true, defaultValue = "SPRITE_DEFINED")
 	@JsonPropertyDescription("The repeat mode")
 	@ModelPropertyType(Type.STRING)
 	private Tween.Type repeat = Tween.Type.SPRITE_DEFINED;       // FIXME: This adds more types not present here before

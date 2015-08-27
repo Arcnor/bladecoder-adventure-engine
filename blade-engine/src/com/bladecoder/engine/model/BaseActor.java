@@ -51,6 +51,8 @@ abstract public class BaseActor extends AbstractModel implements Comparable<Base
 	protected boolean visible = true;
 
 	protected Scene scene = null;
+
+	@JsonProperty
 	protected final Polygon bbox = new Polygon();
 
 	public Polygon getBBox() {

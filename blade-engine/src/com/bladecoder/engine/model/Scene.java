@@ -16,6 +16,7 @@
 package com.bladecoder.engine.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -47,8 +48,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 @ModelDescription("An adventure is composed of many scenes (screens).\n" +
 		"Inside a scene there are actors and a 'player'.\n" +
 		"The player/user can interact with the actors through 'verbs'")
-public class Scene implements Serializable, AssetConsumer {
-
+public class Scene extends AbstractModel implements Serializable, AssetConsumer {
 	public static final Color ACTOR_BBOX_COLOR = new Color(0.2f, 0.2f, 0.8f, 1f);
 	public static final Color WALKZONE_COLOR = Color.GREEN;
 	public static final Color OBSTACLE_COLOR = Color.RED;
@@ -59,7 +59,7 @@ public class Scene implements Serializable, AssetConsumer {
 	@ModelPropertyType(Param.Type.STRING)   // FIXME: This should be OPTION, but not until we convert this field to some other type than String
 	private String backgroundAtlas;
 
-	@JsonProperty
+	@JsonProperty("backgroundRegion")
 	@JsonPropertyDescription("The region id for the background")
 	@ModelPropertyType(Param.Type.STRING)
 	private String backgroundRegionId;
@@ -70,7 +70,7 @@ public class Scene implements Serializable, AssetConsumer {
 	@ModelPropertyType(Param.Type.STRING)   // FIXME: This should be OPTION
 	private String lightMapAtlas;
 
-	@JsonProperty
+	@JsonProperty("lightmapRegion")
 	@JsonPropertyDescription("The region id for the lightmap")
 	@ModelPropertyType(Param.Type.STRING)
 	private String lightMapRegionId;
@@ -107,12 +107,50 @@ public class Scene implements Serializable, AssetConsumer {
 	/**
 	 * All actors in the scene
 	 */
-	private HashMap<String, BaseActor> actors = new HashMap<String, BaseActor>();
+	private HashMap<String, BaseActor> actors = new HashMap<>();
+
+	@JsonProperty("actors")
+	private Collection<BaseActor> getActorsList() {
+		return actors.values();
+	}
+	private void setActorsList(Collection<BaseActor> actors) {
+		for (BaseActor actor : actors) {
+			this.actors.put(actor.getId(), actor);
+		}
+	}
 
 	/**
 	 * BaseActor layers
 	 */
-	private List<SceneLayer> layers = new ArrayList<SceneLayer>();
+	@JsonProperty
+	@JsonPropertyDescription("List of layers for this scene")
+	private List<SceneLayer> layers = new ArrayList<>();
+
+	@JsonProperty
+	private Polygon getWalkZone() {
+		return polygonalNavGraph.getWalkZone();
+	}
+
+	public void setWalkZone(Polygon walkZone) {
+		PolygonalNavGraph polygonalPathFinder = new PolygonalNavGraph();
+
+		polygonalPathFinder.setWalkZone(walkZone);
+
+		setPolygonalNavGraph(polygonalPathFinder);
+	}
+
+	private VerbManager verbs = new VerbManager();
+
+	@JsonProperty
+	private Collection<Verb> getVerbs() {
+		return verbs.getVerbs().values();
+	}
+
+	private void setVerbs(Collection<Verb> verbs) {
+		for (Verb verb : verbs) {
+			this.verbs.addVerb(verb.getId(), verb);
+		}
+	}
 
 	private SceneCamera camera = new SceneCamera();
 
@@ -137,19 +175,7 @@ public class Scene implements Serializable, AssetConsumer {
 
 	transient private boolean isMusicPaused = false;
 
-	private String id;
-
-	private VerbManager verbs = new VerbManager();
-
 	public Scene() {
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public String getState() {

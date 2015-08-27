@@ -15,7 +15,7 @@
  ******************************************************************************/
 package com.bladecoder.engine.ui;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -55,7 +55,7 @@ public class DialogUI extends ScrollPane {
 	}
 
 	public void show() {
-		ArrayList<DialogOption> options = World.getInstance().getCurrentDialog().getVisibleOptions();
+		List<DialogOption> options = World.getInstance().getCurrentDialog().getVisibleOptions();
 
 		if (options.size() == 0)
 			return;
@@ -86,7 +86,7 @@ public class DialogUI extends ScrollPane {
 				public void clicked(InputEvent event, float x, float y) {
 					DialogOption o = (DialogOption) event.getListenerActor().getUserObject();
 
-					ArrayList<DialogOption> options = World.getInstance().getCurrentDialog().getVisibleOptions();
+					List<DialogOption> options = World.getInstance().getCurrentDialog().getVisibleOptions();
 
 					for (int i = 0; i < options.size(); i++) {
 						if (options.get(i) == o) {

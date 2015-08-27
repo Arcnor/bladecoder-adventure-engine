@@ -17,7 +17,10 @@ package com.bladecoder.engine.model;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
@@ -46,6 +49,19 @@ public class CharacterActor extends SpriteActor {
 	@JsonProperty(defaultValue = "700")
 	@JsonPropertyDescription("The walking speed in pix/sec")
 	private float walkingSpeed = DEFAULT_WALKING_SPEED;
+
+	private Map<String, Dialog> dialogs = new LinkedHashMap<>();
+
+	@JsonProperty
+	private Collection<Dialog> getDialogs() {
+		return dialogs.values();
+	}
+
+	private void setDialogs(Collection<Dialog> dialogs) {
+		for (Dialog dialog : dialogs) {
+			this.dialogs.put(dialog.getId(), dialog);
+		}
+	}
 
 	private Color textColor;
 	
@@ -84,8 +100,6 @@ public class CharacterActor extends SpriteActor {
 
 	private String walkAnim = DEFAULT_WALK_ANIM;
 	private String talkAnim = DEFAULT_TALK_ANIM;
-	
-	private HashMap<String, Dialog> dialogs;
 	
 	public Dialog getDialog(String dialog) {
 		return dialogs.get(dialog);

@@ -15,7 +15,7 @@
  ******************************************************************************/
 package com.bladecoder.engine.model;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Polygon;
@@ -60,7 +60,7 @@ public interface ActorRenderer extends Serializable, AssetConsumer {
 	public String getInitAnimation();
 	
 	public String[] getInternalAnimations(AnimationDesc anim);
-	public HashMap<String, AnimationDesc> getAnimations();
+	public Map<String, ? extends AnimationDesc> getAnimations();
 	
 	/**
 	 * Compute the bbox based in the size of the animation/sprite. T

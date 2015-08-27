@@ -32,8 +32,7 @@ import com.bladecoder.engineeditor.ui.components.ScopePanel;
 
 
 public class VerbList extends ElementList {
-	
-	public static final String VERBS[] = { "lookat", "pickup", "talkto", "use", "leave", "enter", "exit", "init",
+	private static final String VERBS[] = { "lookat", "pickup", "talkto", "use", "leave", "enter", "exit", "init",
 		"test", "custom" };
 
 	private ActionList actionList;
@@ -155,21 +154,21 @@ public class VerbList extends ElementList {
 		public TextureRegion getCellImage(Element e) {
 			boolean custom = true;
 			
-			String verbName = e.getAttribute("id");
-			for(String v:VERBS) {
-				if(v.equals(verbName)) {
+			final String verbName = e.getAttribute("id");
+			for (String v : VERBS) {
+				if (v.equals(verbName)) {
 					custom = false;
 					break;
 				}
 			}
-			
-			String iconName = MessageFormat.format("ic_{0}", e.getAttribute("id"));
-			TextureRegion image = null;
-			
-			if(!custom)
+
+			final TextureRegion image;
+			if(!custom) {
+				final String iconName = MessageFormat.format("ic_{0}", e.getAttribute("id"));
 				image = Ctx.assetManager.getIcon(iconName);
-			else
+			} else {
 				image = Ctx.assetManager.getIcon("ic_custom");
+			}
 
 			return image;
 		}

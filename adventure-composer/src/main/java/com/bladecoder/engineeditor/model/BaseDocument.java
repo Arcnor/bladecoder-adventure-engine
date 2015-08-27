@@ -356,22 +356,6 @@ public abstract class BaseDocument extends PropertyChange {
 		return e.getAttribute(XMLConstants.RENDERER_ATTR);
 	}
 
-	public NodeList getVerbs(Element e) {
-		// return e.getElementsByTagName("verb");
-
-		XPathFactory xpathFactory = XPathFactory.newInstance();
-		XPath xpath = xpathFactory.newXPath();
-
-		try {
-			return (NodeList) xpath.evaluate("./verb", e, XPathConstants.NODESET);
-		} catch (XPathExpressionException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
-		}
-
-		return null;
-	}
-
 	public NodeList getChildrenByTag(Element e, String tag) {
 
 		XPathFactory xpathFactory = XPathFactory.newInstance();

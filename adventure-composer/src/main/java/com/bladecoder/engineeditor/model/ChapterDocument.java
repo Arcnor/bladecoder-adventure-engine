@@ -22,6 +22,8 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import com.bladecoder.engine.model.BlueprintChapter;
+import com.bladecoder.engine.model.XML2Bean;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -47,6 +49,7 @@ import com.bladecoder.engine.model.SpriteActor;
 import com.bladecoder.engine.model.SpriteActor.DepthType;
 import com.bladecoder.engine.polygonalpathfinder.PolygonalNavGraph;
 import com.bladecoder.engine.spine.SpineRenderer;
+import org.xml.sax.SAXException;
 
 public class ChapterDocument extends BaseDocument {
 
@@ -58,6 +61,8 @@ public class ChapterDocument extends BaseDocument {
 
 	public static final String ANIMATION_TYPES[] = { XMLConstants.NO_REPEAT_VALUE, XMLConstants.REPEAT_VALUE,
 			XMLConstants.YOYO_VALUE, XMLConstants.REVERSE_VALUE };
+
+	private BlueprintChapter blueprintChapter;
 
 	public ChapterDocument(String modelPath) {
 		super();
@@ -600,5 +605,24 @@ public class ChapterDocument extends BaseDocument {
 		}
 
 		return null;
+	}
+
+	@Override
+	public void load() throws ParserConfigurationException, SAXException, IOException {
+		super.load();
+
+		final File fJsonFile = new File(getAbsoluteName().replace(".chapter", ".json"));
+		blueprintChapter = XML2Bean.loadJson(fJsonFile, BlueprintChapter.class);
+	}
+
+	@Override
+	public void save() throws TransformerException, IOException {
+		if (!modified)
+			return;
+
+		final File fJsonFile = new File(getAbsoluteName().replace(".chapter", ".json"));
+		XML2Bean.saveJson(fJsonFile, blueprintChapter);
+
+		super.save();
 	}
 }

@@ -16,14 +16,17 @@
 package com.bladecoder.engine.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.bladecoder.engine.actions.ModelDescription;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @ModelDescription("Actors can have several dialogs defined. Dialogs have a tree of options to choose")
 public class Dialog extends AbstractModel {
 	public final static String DEFAULT_DIALOG_VERB = "dialog";
-	
-	private ArrayList<DialogOption> options = new ArrayList<DialogOption>();
+
+	@JsonProperty
+	private List<DialogOption> options = new ArrayList<>();
 	
 	private int currentOption = -1;
 	
@@ -70,12 +73,12 @@ public class Dialog extends AbstractModel {
 		options.add(o);
 	}
 
-	public ArrayList<DialogOption> getOptions() {
+	public List<DialogOption> getOptions() {
 		return options;
 	}
 	
-	public ArrayList<DialogOption> getVisibleOptions() {
-		ArrayList<DialogOption> visible = new ArrayList<DialogOption>();
+	public List<DialogOption> getVisibleOptions() {
+		List<DialogOption> visible = new ArrayList<>();
 		
 		for(DialogOption o: options) {
 			if(o.isVisible()) visible.add(o);

@@ -1,11 +1,14 @@
 package com.bladecoder.engine.model;
 
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.bladecoder.engine.actions.AnimationAction;
 import com.bladecoder.engine.actions.CameraAction;
 import com.bladecoder.engine.actions.CancelVerbAction;
 import com.bladecoder.engine.actions.ChooseAction;
+import com.bladecoder.engine.actions.CustomAction;
 import com.bladecoder.engine.actions.DropItemAction;
+import com.bladecoder.engine.actions.ElseAction;
 import com.bladecoder.engine.actions.EndAction;
 import com.bladecoder.engine.actions.GotoAction;
 import com.bladecoder.engine.actions.IfAttrAction;
@@ -40,13 +43,17 @@ import com.bladecoder.engine.actions.TransitionAction;
 import com.bladecoder.engine.actions.WaitAction;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.w3c.dom.Document;
@@ -94,19 +101,48 @@ public final class XML2Bean {
 		jsonMapper.enable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
 		SimpleModule module = new SimpleModule();
+
 		module.addDeserializer(Vector2.class, new JsonDeserializer<Vector2>() {
 			@Override
 			public Vector2 deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 				return Param.parseVector2(p.getValueAsString());
 			}
 		});
+		module.addSerializer(Vector2.class, new JsonSerializer<Vector2>() {
+			@Override
+			public void serialize(Vector2 value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+				gen.writeString(Param.toStringParam(value));
+			}
+		});
+
+		module.addDeserializer(Polygon.class, new JsonDeserializer<Polygon>() {
+			@Override
+			public Polygon deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+				if (!p.isExpectedStartObjectToken()) {
+					throw ctxt.mappingException(Polygon.class);
+				}
+				final JsonNode node = p.getCodec().readTree(p);
+				final Polygon result = new Polygon();
+				if (node.has("polygon")) {
+					final String polygon = node.get("polygon").textValue();
+					Param.parsePolygon(result, polygon);
+				}
+				if (node.has("pos")) {
+					final String pos = node.get("pos").textValue();
+					final Vector2 v = Param.parseVector2(pos);
+					result.setPosition(v.x, v.y);
+				}
+				return result;
+			}
+		});
 		module.registerSubtypes(AnimationAction.class,
 				CameraAction.class,
 				CancelVerbAction.class,
 				ChooseAction.class,
-//				CustomAction.class,
+				CustomAction.class,
 				DropItemAction.class,
 				EndAction.class,
+				ElseAction.class,
 				GotoAction.class,
 				IfAttrAction.class,
 				IfPropertyAction.class,

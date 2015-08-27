@@ -1,9 +1,16 @@
 package com.bladecoder.engine.actions;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public abstract class AbstractControlAction implements Action {
-	public abstract String getControlActionID();
+	@JsonProperty
+	protected String caID;
+
+	public String getControlActionID() {
+		return caID;
+	}
 
 	protected int skipControlIdBlock(List<Action> actions, int ip) {
 		final String caID = getControlActionID();

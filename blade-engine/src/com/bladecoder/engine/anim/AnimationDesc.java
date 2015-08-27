@@ -17,6 +17,7 @@ package com.bladecoder.engine.anim;
 
 import com.badlogic.gdx.math.Vector2;
 import com.bladecoder.engine.model.AbstractModel;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AnimationDesc extends AbstractModel {
 	public final static String BACK = "back";
@@ -27,19 +28,24 @@ public class AnimationDesc extends AbstractModel {
 	public final static String BACKLEFT = "backleft";
 	public final static String FRONTRIGHT = "frontright";
 	public final static String FRONTLEFT = "frontleft";
-	
+
+	@JsonProperty
+	private boolean preload;
+	@JsonProperty
+	private boolean disposeWhenPlayed;
+	@JsonProperty
 	private String source;
+	@JsonProperty
 	private float speed;
+	@JsonProperty
+	private Tween.Type animationType;
+
 	private float delay;
 	private Vector2 inD;
 	private Vector2 outD;
-	private Tween.Type animationType;
 	private int count;
-	
+
 	private String sound;
-	
-	private boolean preload;
-	private boolean disposeWhenPlayed;
 
 	public String getSource() {
 		return source;

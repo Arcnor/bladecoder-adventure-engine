@@ -34,9 +34,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-@JsonTypeName("SetActorAttr")
+@JsonTypeName("ActorAttr")
 @ModelDescription("Change actor attributes.")
-
 public class SetActorAttrAction implements Action {
 	@JsonProperty(value = "actor", required = true)
 	@JsonPropertyDescription("The target actor")

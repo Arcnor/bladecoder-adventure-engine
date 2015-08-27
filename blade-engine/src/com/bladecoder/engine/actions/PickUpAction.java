@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-@JsonTypeName("PickUp")
+@JsonTypeName("Pickup")
 @ModelDescription("Puts the selected actor in the inventory.")
 public class PickUpAction implements Action {
 	@JsonProperty("actor")
