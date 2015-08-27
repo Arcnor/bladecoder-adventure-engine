@@ -18,7 +18,9 @@ package com.bladecoder.engine.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
@@ -107,7 +109,7 @@ public class Scene extends AbstractModel implements Serializable, AssetConsumer 
 	/**
 	 * All actors in the scene
 	 */
-	private HashMap<String, BaseActor> actors = new HashMap<>();
+	private Map<String, BaseActor> actors = new LinkedHashMap<>();
 
 	@JsonProperty("actors")
 	private Collection<BaseActor> getActorsList() {
@@ -380,7 +382,7 @@ public class Scene extends AbstractModel implements Serializable, AssetConsumer 
 		return a;
 	}
 
-	public HashMap<String, BaseActor> getActors() {
+	public Map<String, BaseActor> getActors() {
 		return actors;
 	}
 

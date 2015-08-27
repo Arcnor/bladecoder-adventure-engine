@@ -15,6 +15,9 @@
  ******************************************************************************/
 package com.bladecoder.engineeditor.ui.components;
 
+import com.bladecoder.engine.model.AbstractModel;
+import com.bladecoder.engine.model.BaseActor;
+import com.bladecoder.engine.model.Scene;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -26,6 +29,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.bladecoder.engine.actions.Param;
 import com.bladecoder.engineeditor.Ctx;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SceneActorInputPanel extends InputPanel {
 	SelectBox<String> scene;
@@ -75,29 +84,24 @@ public class SceneActorInputPanel extends InputPanel {
 	
 	private void sceneSelected() {
 		String s = scene.getSelected();
-		
+
+		// FIXME: When non mandatory, this check makes the actor selector full of values, but the scene one keeps being empty, which is confusing
 		if(s == null || s.isEmpty()) {
 			s = Ctx.project.getSelectedScene().getAttribute("id");
 		}
-		
-		
-		NodeList actors = Ctx.project.getSelectedChapter().getActors(Ctx.project.getSelectedChapter().getSceneById(s));
-		int l = actors.getLength();
-		if(!isMandatory()) l++;
-		String values[] = new String[l];
-		
-		if(!isMandatory()) {
-			values[0] = "";
+
+		final Optional<Scene> scene = Ctx.project.getSelectedChapter().getSceneById(s);
+		if (!scene.isPresent()) {
+			actor.setItems();
+			return;
 		}
-		
-		for(int i = 0; i < actors.getLength(); i++) {
-			if(isMandatory())
-				values[i] = ((Element)actors.item(i)).getAttribute("id");
-			else
-				values[i+1] = ((Element)actors.item(i)).getAttribute("id");
+		final Collection<BaseActor> actors = scene.get().getActors().values();
+		final List<String> values = actors.stream().map(AbstractModel::getId).collect(Collectors.toCollection(ArrayList::new));
+		if (!isMandatory()) {
+			values.add(0, "");
 		}
-		
-		actor.setItems(values);	
+
+		actor.setItems(values.toArray(new String[values.size()]));
 	}
 	
 	public String getText() {

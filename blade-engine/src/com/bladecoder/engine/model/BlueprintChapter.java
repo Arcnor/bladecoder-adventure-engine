@@ -5,6 +5,7 @@ import com.bladecoder.engine.actions.Param;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -46,5 +47,10 @@ public class BlueprintChapter extends AbstractModel {
 	@TrackPropertyChanges
 	public void removeScene(Scene scene) {
 		scenes.remove(scene.getId());
+	}
+
+	@Nullable
+	public Scene getScene(String id) {
+		return scenes.get(id);
 	}
 }

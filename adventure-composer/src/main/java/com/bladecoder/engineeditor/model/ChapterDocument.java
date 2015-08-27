@@ -16,8 +16,8 @@
 package com.bladecoder.engineeditor.model;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Optional;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -594,17 +594,9 @@ public class ChapterDocument extends BaseDocument {
 		firePropertyChange(XMLConstants.WALK_ZONE_TAG, e);
 	}
 
-	public Element getSceneById(String id) {
-		NodeList scenes = getScenes();
-
-		for (int i = 0; i < scenes.getLength(); i++) {
-			Element e = (Element) scenes.item(i);
-
-			if (e.getAttribute(XMLConstants.ID_ATTR).equals(id))
-				return e;
-		}
-
-		return null;
+	// TODO: Maybe we should deal with "blueprintChapter" directly, instead of delegating everything through this ChapterDocument?
+	public Optional<Scene> getSceneById(String id) {
+		return Optional.ofNullable(blueprintChapter.getScene(id));
 	}
 
 	@Override
