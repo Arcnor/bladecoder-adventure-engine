@@ -51,7 +51,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 @ModelDescription("An adventure is composed of many scenes (screens).\n" +
 		"Inside a scene there are actors and a 'player'.\n" +
 		"The player/user can interact with the actors through 'verbs'")
-public class Scene extends AbstractModel implements Serializable, AssetConsumer {
+public class Scene extends AbstractModel implements Serializable, AssetConsumer, VerbContainer {
 	public static final Color ACTOR_BBOX_COLOR = new Color(0.2f, 0.2f, 0.8f, 1f);
 	public static final Color WALKZONE_COLOR = Color.GREEN;
 	public static final Color OBSTACLE_COLOR = Color.RED;
@@ -142,16 +142,16 @@ public class Scene extends AbstractModel implements Serializable, AssetConsumer 
 		setPolygonalNavGraph(polygonalPathFinder);
 	}
 
-	private VerbManager verbs = new VerbManager();
+	private VerbManager verbManager = new VerbManager();
 
 	@JsonProperty
 	private Collection<Verb> getVerbs() {
-		return verbs.getVerbs().values();
+		return verbManager.getVerbs().values();
 	}
 
 	private void setVerbs(Collection<Verb> verbs) {
 		for (Verb verb : verbs) {
-			this.verbs.addVerb(verb.getId(), verb);
+			this.verbManager.addVerb(verb);
 		}
 	}
 
@@ -249,15 +249,15 @@ public class Scene extends AbstractModel implements Serializable, AssetConsumer 
 	}
 
 	public VerbManager getVerbManager() {
-		return verbs;
+		return verbManager;
 	}
 
 	public Verb getVerb(String id) {
-		return verbs.getVerb(id, state, null);
+		return verbManager.getVerb(id, state, null);
 	}
 
 	public void runVerb(String id) {
-		verbs.runVerb(id, state, null);
+		verbManager.runVerb(id, state, null);
 	}
 
 	public void update(float delta) {
@@ -698,7 +698,7 @@ public class Scene extends AbstractModel implements Serializable, AssetConsumer 
 		json.writeValue("layers", layers);
 		json.writeValue("id", id);
 		json.writeValue("state", state, state == null ? null : state.getClass());
-		json.writeValue("verbs", verbs);
+		json.writeValue("verbs", verbManager);
 
 		json.writeValue("actors", actors);
 		json.writeValue("player", player);
@@ -736,7 +736,7 @@ public class Scene extends AbstractModel implements Serializable, AssetConsumer 
 		layers = json.readValue("layers", ArrayList.class, SceneLayer.class, jsonData);
 		id = json.readValue("id", String.class, jsonData);
 		state = json.readValue("state", String.class, jsonData);
-		verbs = json.readValue("verbs", VerbManager.class, jsonData);
+		verbManager = json.readValue("verbs", VerbManager.class, jsonData);
 
 		actors = json.readValue("actors", HashMap.class, BaseActor.class, jsonData);
 		player = json.readValue("player", String.class, jsonData);
