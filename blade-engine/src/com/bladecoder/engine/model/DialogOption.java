@@ -16,10 +16,12 @@
 package com.bladecoder.engine.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.badlogic.gdx.graphics.Color;
 
 public class DialogOption {
-	@JsonProperty
 	private String text;
+	@JsonProperty
+	private String font;
 	@JsonProperty
 	private String responseText;
 	@JsonProperty("verb")
@@ -30,6 +32,7 @@ public class DialogOption {
 	private boolean visible = true;
 	@JsonProperty
 	private boolean once = false;
+	private Color color;
 
 	public boolean isVisible() {
 		return visible;
@@ -53,6 +56,22 @@ public class DialogOption {
 
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public String getFont() {
+		return font;
+	}
+
+	public void setFont(String font) {
+		this.font = font;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
 	}
 
 	public void setResponseText(String responseText) {

@@ -25,7 +25,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -67,7 +66,7 @@ public class AtlasRenderer implements ActorRenderer {
 
 	private AtlasAnimationDesc currentAnimation;
 
-	private TextureRegion tex;
+	private AtlasRegion tex;
 	private boolean flipX;
 	private FATween faTween;
 	
@@ -133,21 +132,25 @@ public class AtlasRenderer implements ActorRenderer {
 
 	@Override
 	public void draw(SpriteBatch batch, float x, float y, float scale) {
-		
-		x = x - getWidth() / 2 * scale; // SET THE X ORIGIN TO THE CENTER OF THE SPRITE
 
 		if (tex == null) {
+			x = x - getWidth() / 2 * scale;
+
 			RectangleRenderer.draw(batch, x, y, getWidth() * scale, getHeight()
 					* scale, Color.RED);
 			return;
 		}
 
+
+		x = x + tex.offsetX - tex.originalWidth / 2;
+		y = y + tex.offsetY + tex.originalHeight * (scale - 1) / 2;
+
 		if (!flipX) {
-			batch.draw(tex, x, y, 0, 0, tex.getRegionWidth(),
-					tex.getRegionHeight(), scale, scale, 0);
+			batch.draw(tex, x, y, tex.packedWidth / 2, tex.packedHeight / 2, tex.packedWidth,
+					tex.packedHeight, scale, scale, 0);
 		} else {
-			batch.draw(tex, x + tex.getRegionWidth() * scale, y, 0,
-					0, -tex.getRegionWidth(), tex.getRegionHeight(),
+			batch.draw(tex, x + tex.packedWidth * scale, y, tex.packedWidth / 2,
+					tex.packedHeight / 2, -tex.packedWidth, tex.packedHeight,
 					scale, scale, 0);
 		}
 	}
@@ -157,7 +160,8 @@ public class AtlasRenderer implements ActorRenderer {
 		if (tex == null)
 			return DEFAULT_DIM;
 
-		return tex.getRegionWidth();
+//		return tex.getRegionWidth();
+		return tex.originalWidth;
 	}
 
 	@Override
@@ -165,7 +169,8 @@ public class AtlasRenderer implements ActorRenderer {
 		if (tex == null)
 			return DEFAULT_DIM;
 
-		return tex.getRegionHeight();
+//		return tex.getRegionHeight();
+		return tex.originalHeight;
 	}
 
 	@Override
@@ -452,9 +457,15 @@ public class AtlasRenderer implements ActorRenderer {
 		if (currentAnimation != null && !currentAnimation.isPreload()) {
 			loadSource(currentAnimation.getSource());
 		} else if (currentAnimation == null && initAnimation != null) {
-			AnimationDesc fa = fanims.get(initAnimation);
+			String a = initAnimation;
 
-			if (!fa.isPreload())
+			if (flipX) {
+				a = AnimationDesc.getFlipId(a);
+			}
+
+			AtlasAnimationDesc fa = (AtlasAnimationDesc)fanims.get(a);
+
+			if (fa != null && !fa.isPreload())
 				loadSource(fa.getSource());
 		}
 	}
@@ -469,9 +480,15 @@ public class AtlasRenderer implements ActorRenderer {
 		if(currentAnimation != null && !currentAnimation.isPreload()) {
 			retrieveFA(currentAnimation);
 		} else if(currentAnimation == null && initAnimation != null) {
-			AtlasAnimationDesc fa = (AtlasAnimationDesc)fanims.get(initAnimation);
+			String a = initAnimation;
 			
-			if(!fa.isPreload())
+			if (flipX) {
+				a = AnimationDesc.getFlipId(a);
+			}
+
+			AtlasAnimationDesc fa = (AtlasAnimationDesc)fanims.get(a);
+
+			if(fa != null && !fa.isPreload())
 				retrieveFA(fa);		
 		}
 
